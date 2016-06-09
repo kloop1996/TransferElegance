@@ -1,6 +1,8 @@
 package com.hmarka.kloop1996.transferelegance.viewmodel;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.databinding.ObservableField;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -107,6 +109,9 @@ public class LoginViewModel implements ViewModel {
                         transferEleganceApplication.setUser(new User(name,phone));
 
                         transferEleganceApplication.updateSharedPreference();
+
+                        ((Activity) context).startActivity(new Intent(((Activity) context),MainActivity.class));
+                        ((Activity) context).finish();
                     }
                 });
     }

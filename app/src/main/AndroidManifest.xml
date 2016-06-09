@@ -10,6 +10,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ui.activtity.LoginActivity">
+
+        </activity>
+
+        <activity android:name=".ui.activtity.MainActivity">
+
+        </activity>
+        <activity android:name=".ui.activtity.ActivityLauncher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -17,9 +24,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.activtity.MainActivity">
-
-        </activity>
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
