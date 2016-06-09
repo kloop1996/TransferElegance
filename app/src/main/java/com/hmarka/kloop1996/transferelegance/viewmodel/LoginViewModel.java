@@ -37,6 +37,10 @@ public class LoginViewModel implements ViewModel {
     public LoginViewModel(Context context) {
         nameField = new ObservableField<String>();
         phoneField = new ObservableField<String>();
+
+        name = "";
+        phone = "";
+
         this.context = context;
     }
 
@@ -73,7 +77,7 @@ public class LoginViewModel implements ViewModel {
     }
 
     public void onClickLogin(View view) {
-        if (name == null || phone == null) {
+        if (name.length()==0 || phone.length() == 0) {
             Toast.makeText(context, R.string.EMPTY_FIELD_MESSAGE, Toast.LENGTH_SHORT).show();
         }
 
