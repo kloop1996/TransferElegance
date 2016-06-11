@@ -6,4 +6,11 @@
     <string name="INTERNET_ERROR_MESSAGE">Interner error</string>
     <string name="EMPTY_FIELD_MESSAGE">Empty fields</string>
     <string name="ChangeUserData">Change</string>
+    <string name="second_name">AlexTaxi</string>
+    <string name="settings">SETTINGS</string>
+    <string name="history">HISTORY</string>
+    <string name ="offline_message">Sorry :( \n Alex is offline. Try call him</string>
+    <string name ="from_hint">Your location</string>
+    <string name ="destination_hint">Set destination point</string>
+
 </resources>

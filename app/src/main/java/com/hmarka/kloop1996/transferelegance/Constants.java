@@ -7,4 +7,5 @@ public class Constants {
     public final static String USER_TOKEN = "userToken";
     public final static String TELEPHONE = "telephone";
     public final static String NAME = "name";
+    public final static String BOOKING_FRAGMENT = "booking";
 }
