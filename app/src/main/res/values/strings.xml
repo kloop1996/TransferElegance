@@ -5,4 +5,5 @@
     <string name="continue_label">Continue</string>
     <string name="INTERNET_ERROR_MESSAGE">Interner error</string>
     <string name="EMPTY_FIELD_MESSAGE">Empty fields</string>
+    <string name="ChangeUserData">Change</string>
 </resources>

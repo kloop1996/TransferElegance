@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/settings"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.hmarka.kloop1996.transferelegance.viewmodel.SettingsViewModel" />
+    </data>
+
+
+    <LinearLayout
+
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:orientation="vertical"
+            android:layout_marginTop="50dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+
+            <EditText
+                style="@style/SettingsTextFields"
+                android:id="@+id/nameEdit"
+                android:hint="@string/name_hint"
+                android:inputType="textEmailAddress"
+                />
+
+
+            <EditText
+                style="@style/SettingsTextFields"
+                android:id="@+id/telephoneEdit"
+                android:hint="@string/telephone_hint"
+                android:inputType="phone"
+                 />
+
+
+            <!-- Login Button -->
+
+            <Button
+                android:id="@+id/loginButton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="300dp"
+                android:text="@string/ChangeUserData"
+                android:textColor="@color/white_transparent"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</layout>
