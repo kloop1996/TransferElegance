@@ -4,8 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.provider.Settings;
-import android.support.multidex.MultiDex;
-import android.support.multidex.MultiDexApplication;
 
 import com.hmarka.kloop1996.transferelegance.core.TransferEleganceService;
 import com.hmarka.kloop1996.transferelegance.model.User;
@@ -17,7 +15,7 @@ import rx.schedulers.Schedulers;
 /**
  * Created by kloop1996 on 06.06.2016.
  */
-public class TransferEleganceApplication extends MultiDexApplication {
+public class TransferEleganceApplication extends Application {
 
     private static final String PREFS_NAME = "AppPrefs";
 
@@ -110,12 +108,6 @@ public class TransferEleganceApplication extends MultiDexApplication {
         editor.putString(Constants.TELEPHONE,user.getTelephone());
 
         editor.apply();
-    }
-
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(newBase);
-        MultiDex.install(this);
     }
 
 }
