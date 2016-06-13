@@ -3,8 +3,14 @@ package com.hmarka.kloop1996.transferelegance;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.places.Places;
 import com.hmarka.kloop1996.transferelegance.core.TransferEleganceService;
 import com.hmarka.kloop1996.transferelegance.model.User;
 
@@ -22,6 +28,7 @@ public class TransferEleganceApplication extends Application {
     private SharedPreferences settings;
     private Scheduler defaultSubscribeScheduler;
     private TransferEleganceService transferEleganceService;
+
 
     private User user;
     private String deviceToken;
@@ -44,6 +51,8 @@ public class TransferEleganceApplication extends Application {
         }
         return transferEleganceService;
     }
+
+
 
     public User getUser() {
         return user;
