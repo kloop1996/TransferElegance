@@ -39,12 +39,18 @@
                 android:textSize="20sp"
                 android:text="From" />
 
-                <EditText
-                    style="@style/SettingsTextFields"
-                    android:id="@+id/current_location"
-                    android:hint="@string/your_location"
-                    android:inputType="textAutoComplete"
-                    />
+                <!--<EditText-->
+                    <!--style="@style/SettingsTextFields"-->
+                    <!--android:id="@+id/current_location"-->
+                    <!--android:hint="@string/your_location"-->
+                    <!--android:inputType="textAutoComplete"-->
+                    <!--/>-->
+
+                <fragment
+                    android:id="@+id/autocomplete_fragment_from"
+                    android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
                 </LinearLayout>
 
@@ -67,12 +73,18 @@
                     android:textSize="14sp"
                     android:text="To" />
 
-                <EditText
-                    style="@style/SettingsTextFields"
-                    android:id="@+id/destinition_location"
-                    android:hint="@string/dest_location"
-                    android:inputType="textAutoComplete"
-                    />
+                <!--<EditText-->
+                    <!--style="@style/SettingsTextFields"-->
+                    <!--android:id="@+id/destinition_location"-->
+                    <!--android:hint="@string/dest_location"-->
+                    <!--android:inputType="textAutoComplete"-->
+                    <!--/>-->
+
+                <fragment
+                    android:id="@+id/autocomplete_fragment_to"
+                    android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
 
