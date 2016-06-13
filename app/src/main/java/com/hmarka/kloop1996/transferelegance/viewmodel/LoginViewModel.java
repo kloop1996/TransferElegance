@@ -30,15 +30,11 @@ public class LoginViewModel implements ViewModel {
     private Context context;
     private Subscription subscription;
 
-    private ObservableField<String> nameField;
-    private ObservableField<String> phoneField;
 
     private String name;
     private String phone;
 
     public LoginViewModel(Context context) {
-        nameField = new ObservableField<String>();
-        phoneField = new ObservableField<String>();
 
         name = "";
         phone = "";
@@ -62,21 +58,6 @@ public class LoginViewModel implements ViewModel {
         this.phone = phone;
     }
 
-    public ObservableField<String> getNameField() {
-        return nameField;
-    }
-
-    public void setNameField(ObservableField<String> nameField) {
-        this.nameField = nameField;
-    }
-
-    public ObservableField<String> getPhoneField() {
-        return phoneField;
-    }
-
-    public void setPhoneField(ObservableField<String> phoneField) {
-        this.phoneField = phoneField;
-    }
 
     public void onClickLogin(View view) {
         if (name.length()==0 || phone.length() == 0) {

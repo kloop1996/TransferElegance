@@ -8,4 +8,7 @@ public class Constants {
     public final static String TELEPHONE = "telephone";
     public final static String NAME = "name";
     public final static String BOOKING_FRAGMENT = "booking";
+
+    public final static String SETTINGS_FRAGMENT = "settings";
+    public final static String HISTORY_FRAGMENT = "history";
 }

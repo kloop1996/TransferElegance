@@ -1,5 +1,6 @@
 package com.hmarka.kloop1996.transferelegance.core;
 
+import com.hmarka.kloop1996.transferelegance.model.ResponseDriverStatus;
 import com.hmarka.kloop1996.transferelegance.model.ResponseToken;
 
 import okhttp3.RequestBody;
@@ -11,6 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -21,14 +23,17 @@ import retrofit2.http.Part;
  */
 public interface TransferEleganceService {
 
-    @Headers({
-            "Content-Type : application/json"
-    })
 
     @Multipart
     @POST("/api/nurse/login/")
     public rx.Observable<ResponseToken> getToken(@Part("name") RequestBody name, @Part("phone_number") RequestBody phone, @Part("token") RequestBody token, @Part("os_name") RequestBody osName);
 
+
+    @Headers({
+            "Content-Type : application/json"
+    })
+    @GET("/api/nurse/get_driver_status")
+    public rx.Observable<ResponseDriverStatus> getDriverStatus();
 
     class Factory {
         public static TransferEleganceService create() {

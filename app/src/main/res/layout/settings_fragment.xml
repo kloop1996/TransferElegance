@@ -31,6 +31,8 @@
                 android:id="@+id/nameEdit"
                 android:hint="@string/name_hint"
                 android:inputType="textEmailAddress"
+                android:text="@{viewModel.name}"
+                app:addTextChangedListener="@{viewModel.nameEditTextWatcher}"
                 />
 
 
@@ -39,6 +41,8 @@
                 android:id="@+id/telephoneEdit"
                 android:hint="@string/telephone_hint"
                 android:inputType="phone"
+                android:text="@{viewModel.telephone}"
+                app:addTextChangedListener="@{viewModel.phoneEditTextWatcher}"
                  />
 
 
