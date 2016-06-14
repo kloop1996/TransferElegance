@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Places;
+import com.hmarka.kloop1996.transferelegance.core.GoogleDirectionsService;
 import com.hmarka.kloop1996.transferelegance.core.TransferEleganceService;
 import com.hmarka.kloop1996.transferelegance.model.User;
 
@@ -28,6 +29,7 @@ public class TransferEleganceApplication extends Application {
     private SharedPreferences settings;
     private Scheduler defaultSubscribeScheduler;
     private TransferEleganceService transferEleganceService;
+    private GoogleDirectionsService googleDirectionsService;
 
 
     private User user;
@@ -119,4 +121,11 @@ public class TransferEleganceApplication extends Application {
         editor.apply();
     }
 
+    public GoogleDirectionsService getGoogleDirectionsService() {
+        return googleDirectionsService;
+    }
+
+    public void setGoogleDirectionsService(GoogleDirectionsService googleDirectionsService) {
+        this.googleDirectionsService = googleDirectionsService;
+    }
 }

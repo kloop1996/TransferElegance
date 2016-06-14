@@ -21,6 +21,6 @@
     <color name="input_register_hint">#5e6266</color>
     <color name="window_background">@color/white</color>
     <color name="offline_fragment_background">#e7e7e7</color>
-
+    <color name="polyline_color">#4597ff</color>
 
 </resources>

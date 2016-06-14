@@ -14,5 +14,8 @@
     <string name ="destination_hint">Set destination point</string>
     <string name ="your_location">"Your location"</string>
     <string name ="dest_location">"Destination location"</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="google_direction_key">AIzaSyDz2Ig33CPkAGL-ouQTH8QflAe58IlSpIg</string>
 
 </resources>

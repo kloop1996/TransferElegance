@@ -29,10 +29,4 @@ public class BookingViewModel implements ViewModel {
         context=null;
     }
 
-    public void onMapReady(GoogleMap map) {
-        // Add a marker in Sydney, Australia, and move the camera.
-        LatLng sydney = new LatLng(-34, 151);
-        map.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-    }
 }
