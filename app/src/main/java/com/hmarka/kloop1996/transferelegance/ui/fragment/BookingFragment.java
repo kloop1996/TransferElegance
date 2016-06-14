@@ -177,8 +177,9 @@ public class BookingFragment extends Fragment implements OnMapReadyCallback, Goo
 
 
     private void initAutocompleteView(){
+        int x=10;
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-                getFragmentManager().findFragmentById(R.id.autocomplete_fragment_from);
+                getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment_from);
         autocompleteFragment.setHint(getResources().getString(R.string.from_hint));
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
@@ -212,7 +213,7 @@ public class BookingFragment extends Fragment implements OnMapReadyCallback, Goo
         });
 
         autocompleteFragment = (PlaceAutocompleteFragment)
-                getFragmentManager().findFragmentById(R.id.autocomplete_fragment_to);
+                getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment_to);
         autocompleteFragment.setHint(getResources().getString(R.string.destination_hint));
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
