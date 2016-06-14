@@ -35,6 +35,12 @@ public interface TransferEleganceService {
     @GET("/api/nurse/get_driver_status")
     public rx.Observable<ResponseDriverStatus> getDriverStatus();
 
+    @Headers({
+            "Content-Type : application/json"
+    })
+    @POST("/api/nurse/get_driver_status")
+    public rx.Observable<ResponseBody> createOrder();
+
     class Factory {
         public static TransferEleganceService create() {
             Retrofit retrofit;

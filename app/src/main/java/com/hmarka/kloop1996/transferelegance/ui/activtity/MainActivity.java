@@ -56,6 +56,8 @@ import com.hmarka.kloop1996.transferelegance.databinding.ActivityMainBinding;
 import com.hmarka.kloop1996.transferelegance.databinding.BookingFragmentBinding;
 import com.hmarka.kloop1996.transferelegance.model.TimeEntity;
 import com.hmarka.kloop1996.transferelegance.ui.dialog.EndTimePickerDialog;
+import com.hmarka.kloop1996.transferelegance.util.PriceUtil;
+import com.hmarka.kloop1996.transferelegance.util.TimeConverUtil;
 import com.hmarka.kloop1996.transferelegance.viewmodel.MainViewModel;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
@@ -75,10 +77,14 @@ import retrofit2.Response;
 import retrofit2.http.Multipart;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerDragListener, RoutingListener {
+
+
+
+    private static MainActivity instance;
+
     private MainViewModel mainViewModel;
     private ActivityMainBinding activityMainBinding;
 
-    private BookingFragmentBinding bookingFragmentBinding;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private GoogleMap mGoogleMap;
@@ -92,12 +98,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public static TimeEntity appointmentTime;
     public static TimeEntity countTime;
 
+    private int currentDistanse;
+    private int currentDuration;
+
     private Drawer drawer;
     private Toolbar toolbar;
+
+    public static MainActivity getInstance() {
+        return instance;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance=this;
         activityMainBinding = DataBindingUtil.setContentView(this,R.layout.activity_main);
         mainViewModel = new MainViewModel(this);
 
@@ -340,7 +354,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             routing.execute();
             DialogFragment fragmentDialog = new EndTimePickerDialog();
             fragmentDialog.show(getFragmentManager(),"");
-            int x = 10;
         }
     }
 
@@ -373,8 +386,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Polyline polyline = mGoogleMap.addPolyline(polyOptions);
         polylines.add(polyline);
         route.get(i);
-        Toast.makeText(this, "Route " + (i + 1) + ": distance - " + route.get(0).getDistanceValue() + ": duration - " + route.get(i).getDurationValue(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Route " + (i + 1) + ": distance - " + route.get(0).getDistanceValue() + ": duration - " + route.get(i).getDurationValue(), Toast.LENGTH_SHORT).show();
 
+        mainViewModel.setDistance(route.get(0).getDistanceValue());
+        currentDistanse = route.get(0).getDistanceValue();
+        currentDuration=route.get(0).getDurationValue();
+        mainViewModel.setTime(TimeConverUtil.getTimeEntity(route.get(0).getDurationValue()));
 
         LatLngBounds latLngBounds = latLngBuilder.build();
         int size = getResources().getDisplayMetrics().widthPixels;
@@ -401,4 +418,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    public void notifySetTime(){
+
+        if (appointmentTime!=null)
+            mainViewModel.setAppointmentTime(appointmentTime);
+        if(countTime!=null){
+            mainViewModel.setWaitUntilTime(countTime);
+        }
+
+        double divider = Constants.PRICE_HOUR_WAYTIME/3600.0;
+
+        mainViewModel.setPrice((int)(currentDuration*divider));
+
+    }
 }

@@ -12,6 +12,8 @@ public class TimeEntity {
         this.minute = minute;
     }
 
+    public TimeEntity(){;}
+
     public int getHour() {
         return hour;
     }

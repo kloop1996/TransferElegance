@@ -34,6 +34,6 @@ public class CountTimePicker extends DialogFragment
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         MainActivity.countTime = new TimeEntity(hourOfDay,minute);
-
+        ((MainActivity)MainActivity.getInstance()).notifySetTime();
     }
 }
