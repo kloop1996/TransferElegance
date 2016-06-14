@@ -1,5 +1,6 @@
 package com.hmarka.kloop1996.transferelegance.ui.fragment;
 
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.IntentSender;
@@ -54,6 +55,8 @@ import com.hmarka.kloop1996.transferelegance.R;
 import com.hmarka.kloop1996.transferelegance.TransferEleganceApplication;
 import com.hmarka.kloop1996.transferelegance.databinding.BookingFragmentBinding;
 import com.hmarka.kloop1996.transferelegance.model.TimeEntity;
+import com.hmarka.kloop1996.transferelegance.ui.dialog.CountTimePicker;
+import com.hmarka.kloop1996.transferelegance.ui.dialog.EndTimePickerDialog;
 import com.hmarka.kloop1996.transferelegance.viewmodel.BookingViewModel;
 
 import java.util.ArrayList;
@@ -77,16 +80,21 @@ public class BookingFragment extends Fragment implements OnMapReadyCallback, Goo
     private Marker markerFrom;
     private Marker markerTo;
 
-    private TimeEntity appointmentTime;
-    private TimeEntity countTime;
+
+
+    public static TimeEntity appointmentTime;
+    public static TimeEntity countTime;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        bookingFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.booking_fragment,container,false);
-        bookingFragmentBinding.setViewModel(new BookingViewModel(getActivity()));
+
+            bookingFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.booking_fragment,container,false);
+             bookingFragmentBinding.setViewModel(new BookingViewModel(getActivity()));
 
         GoogleMapOptions options = new GoogleMapOptions();
         options.compassEnabled(true);
@@ -286,7 +294,6 @@ public class BookingFragment extends Fragment implements OnMapReadyCallback, Goo
 
     private void notifySelectPlace() {
         if (from != null && to != null) {
-            //стартуем диалоги
             Routing routing = new Routing.Builder()
                     .travelMode(AbstractRouting.TravelMode.DRIVING)
                     .withListener(this)
@@ -294,7 +301,9 @@ public class BookingFragment extends Fragment implements OnMapReadyCallback, Goo
                     .key(getResources().getString(R.string.google_direction_key))
                     .build();
             routing.execute();
-            //показываем кнопку
+            DialogFragment fragmentDialog = new EndTimePickerDialog();
+            fragmentDialog.show(getFragmentManager(),"");
+            int x = 10;
         }
     }
 
@@ -330,6 +339,8 @@ public class BookingFragment extends Fragment implements OnMapReadyCallback, Goo
         int size = getResources().getDisplayMetrics().widthPixels;
         CameraUpdate track = CameraUpdateFactory.newLatLngBounds(latLngBounds,size,size,25);
         mGoogleMap.moveCamera(track);
+
+
     }
 
     @Override

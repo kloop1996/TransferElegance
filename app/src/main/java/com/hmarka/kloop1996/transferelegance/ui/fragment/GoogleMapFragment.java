@@ -15,6 +15,5 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class GoogleMapFragment extends Fragment{
 
 
-
-    }
+}
 
