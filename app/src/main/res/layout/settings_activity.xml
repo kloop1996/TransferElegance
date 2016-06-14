@@ -9,9 +9,18 @@
             type="com.hmarka.kloop1996.transferelegance.viewmodel.SettingsViewModel" />
     </data>
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <LinearLayout
-
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center"
@@ -55,9 +64,11 @@
                 android:layout_marginTop="300dp"
                 android:text="@string/ChangeUserData"
                 android:textColor="@color/white_transparent"
+                android:onClick="@{viewModel.onClick}"
                 android:textStyle="bold"/>
         </LinearLayout>
 
+    </LinearLayout>
     </LinearLayout>
 
 </layout>

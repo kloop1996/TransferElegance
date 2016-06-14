@@ -27,12 +27,7 @@
             android:layout_below="@id/toolbar"
             >
 
-            <RelativeLayout
-                android:id="@+id/container_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                android:layout_below="@+id/drawer_container"
-            </RelativeLayout>
+            <include layout="@layout/booking_fragment"/>
         </FrameLayout>
     </RelativeLayout>
 </layout>

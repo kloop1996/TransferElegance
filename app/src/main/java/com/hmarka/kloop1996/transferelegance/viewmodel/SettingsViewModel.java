@@ -1,5 +1,6 @@
 package com.hmarka.kloop1996.transferelegance.viewmodel;
 
+import android.app.Activity;
 import android.content.Context;
 import android.databinding.ObservableField;
 import android.text.Editable;
@@ -8,6 +9,7 @@ import android.view.View;
 
 import com.hmarka.kloop1996.transferelegance.TransferEleganceApplication;
 import com.hmarka.kloop1996.transferelegance.model.User;
+import com.hmarka.kloop1996.transferelegance.ui.activtity.SettingsActivity;
 
 import rx.Subscription;
 import rx.subscriptions.Subscriptions;
@@ -37,7 +39,6 @@ public class SettingsViewModel implements ViewModel {
     }
 
     private Context context;
-    private Subscriptions subscriptions;
 
     public SettingsViewModel(Context context) {
         this.context = context;
@@ -49,11 +50,13 @@ public class SettingsViewModel implements ViewModel {
 
     }
 
-    public void onClickLogin(View view) {
+    public void onClick(View view) {
         TransferEleganceApplication transferEleganceApplication = TransferEleganceApplication.get(context);
 
         transferEleganceApplication.setUser(new User(name,telephone));
         transferEleganceApplication.updateSharedPreference();
+
+        ((Activity)context).onBackPressed();
     }
 
     public TextWatcher getNameEditTextWatcher() {

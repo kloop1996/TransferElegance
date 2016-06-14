@@ -9,6 +9,8 @@
             type="com.hmarka.kloop1996.transferelegance.viewmodel.BookingViewModel" />
     </data>
 
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -18,6 +18,16 @@
 
         </activity>
 
+        <activity android:name=".ui.activtity.SettingsActivity"
+            >
+
+        </activity>
+
+        <activity android:name=".ui.activtity.HistoryActivity"
+            >
+
+        </activity>
+
         <activity android:name=".ui.activtity.MainActivity"
             android:screenOrientation="portrait"
             >

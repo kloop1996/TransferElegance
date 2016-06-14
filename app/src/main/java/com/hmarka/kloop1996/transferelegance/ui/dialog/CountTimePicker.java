@@ -8,6 +8,7 @@ import android.text.format.DateFormat;
 import android.widget.TimePicker;
 
 import com.hmarka.kloop1996.transferelegance.model.TimeEntity;
+import com.hmarka.kloop1996.transferelegance.ui.activtity.MainActivity;
 import com.hmarka.kloop1996.transferelegance.ui.fragment.BookingFragment;
 
 import java.util.Calendar;
@@ -21,17 +22,18 @@ public class CountTimePicker extends DialogFragment
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current time as the default values for the picker
-        int hour = 0;
-        int minute = 0;
+        int hour = MainActivity.appointmentTime.getHour();
+        int minute = MainActivity.appointmentTime.getHour();
 
         TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), this, hour, minute,
                 DateFormat.is24HourFormat(getActivity()));
 
-        timePickerDialog.setTitle("Count time");
+        timePickerDialog.setTitle("Wait until");
         return timePickerDialog;
     }
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        BookingFragment.countTime = new TimeEntity(hourOfDay,minute);
+        MainActivity.countTime = new TimeEntity(hourOfDay,minute);
+
     }
 }

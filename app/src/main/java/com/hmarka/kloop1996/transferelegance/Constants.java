@@ -12,6 +12,9 @@ public class Constants {
     public final static String SETTINGS_FRAGMENT = "settings";
     public final static String HISTORY_FRAGMENT = "history";
 
+    public final static int PRICE_HOUR_DOWNTIME = 5;
+    public final static int PRICE_HOUR_WAYTIME = 20;
+
     public static final int SUCCESS_RESULT = 0;
 
     public static final int FAILURE_RESULT = 1;

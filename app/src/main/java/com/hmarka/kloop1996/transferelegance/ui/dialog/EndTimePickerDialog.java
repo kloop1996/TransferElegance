@@ -10,6 +10,7 @@ import android.text.format.DateFormat;
 import android.widget.TimePicker;
 
 import com.hmarka.kloop1996.transferelegance.model.TimeEntity;
+import com.hmarka.kloop1996.transferelegance.ui.activtity.MainActivity;
 import com.hmarka.kloop1996.transferelegance.ui.fragment.BookingFragment;
 
 import java.util.Calendar;
@@ -36,6 +37,8 @@ public class EndTimePickerDialog extends DialogFragment
     }
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        BookingFragment.appointmentTime = new TimeEntity(hourOfDay,minute);
+        MainActivity.appointmentTime = new TimeEntity(hourOfDay,minute);
+        DialogFragment dialogFragment = new CountTimePicker();
+        dialogFragment.show(getFragmentManager(),"");
     }
 }
