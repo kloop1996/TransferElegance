@@ -14,6 +14,7 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         tools:context=".ui.view.activity.MainActivity">
+
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -27,16 +28,18 @@
             android:layout_below="@id/toolbar"
             >
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginBottom="40dp">
 
                 <LinearLayout
                     android:id="@+id/layout_content"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
+
                     android:background="@color/white">
 
                     <LinearLayout
@@ -54,7 +57,7 @@
                             android:paddingLeft="12dp"
                             android:paddingRight="12dp"
                             android:paddingTop="12dp"
-                            android:textSize="20sp"
+                            android:textSize="17dp"
                             android:text="@string/from" />
 
                         <!--<EditText-->
@@ -68,7 +71,7 @@
                             android:id="@+id/autocomplete_fragment_from"
                             android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="match_parent" />
 
                     </LinearLayout>
 
@@ -88,7 +91,8 @@
                             android:paddingRight="12dp"
                             android:paddingTop="10dp"
                             android:textColor="@color/secondary_text"
-                            android:textSize="14sp"
+                            android:textSize="17dp"
+                            android:layout_marginLeft="20dp"
                             android:text="@string/to" />
 
                         <!--<EditText-->
@@ -102,7 +106,7 @@
                             android:id="@+id/autocomplete_fragment_to"
                             android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="match_parent" />
 
                     </LinearLayout>
 
@@ -111,7 +115,7 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="60dp"
+                        android:layout_height="50dp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -150,16 +154,16 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="30dp"
+                        android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
                         <TextView
 
                             android:layout_width="0dp"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:textSize="20sp"
+                            android:textSize="10dp"
                             android:textColor="@color/secondary_text"
                             android:text='@{"Appointment " + viewModel.appointment}' />
 
@@ -168,7 +172,7 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:textSize="20sp"
+                            android:textSize="10dp"
                             android:gravity="center"
                             android:textColor="@color/secondary_text"
                             android:text='@{"Wait until  " + viewModel.waitUntil}' />
@@ -180,33 +184,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         >
-
-
                     </FrameLayout>
-                    <!--<fragment-->
-                    <!--android:visibility="invisible"-->
-                    <!--android:name="com.hmarka.kloop1996.transferelegance.ui.fragment.OfflineMessageFragment"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="match_parent" />-->
-
-                    <!--<fragment-->
-                    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
-                    <!--xmlns:map="http://schemas.android.com/apk/res-auto"-->
-                    <!--map:cameraTargetLat="53.54"-->
-                    <!--map:cameraTargetLng="27"-->
-                    <!--map:uiZoomControls="true"-->
-                    <!--map:uiCompass="true"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:id="@+id/map"-->
-                    <!--tools:context=".ui.fragment.GoogleMapFragment"-->
-                    <!--android:name="com.google.android.gms.maps.MapFragment" />-->
-
 
                 </LinearLayout>
-
-
-            </LinearLayout>
+            </RelativeLayout>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="bottom"/>
         </FrameLayout>
     </RelativeLayout>
 </layout>

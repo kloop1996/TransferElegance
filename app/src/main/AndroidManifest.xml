@@ -14,7 +14,8 @@
         android:theme="@style/AppTheme"
         >
         <activity android:name=".ui.activtity.LoginActivity"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar.FullScreen">
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar.FullScreen"
+            android:noHistory="true">
 
         </activity>
 
@@ -31,16 +32,21 @@
         <activity android:name=".ui.activtity.MainActivity"
             android:screenOrientation="portrait"
             >
-
         </activity>
-        <activity android:name=".ui.activtity.ActivityLauncher">
 
+        <activity android:name=".ui.activtity.SplashScreen"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".ui.activtity.ActivityLauncher">
+
+        </activity>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCHGHo275OCO3dFVQGoUlw8b7SjcbmMZRU"/>
