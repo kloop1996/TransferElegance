@@ -88,7 +88,7 @@ public class MainViewModel implements ViewModel {
         String result;
 
 //        result= String.format("_%2d",time.getHour())+":"+"_%2d",String.format("_%2d",time.getHour());
-        this.waitUntil.set(String.format("%02d",time.getHour())+":"+String.format("%02d",time.getHour()));
+        this.waitUntil.set(String.format("%02d",time.getHour())+":"+String.format("%02d",time.getMinute()));
     }
 
     public void setPrice(int price){

@@ -446,7 +446,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         TransferEleganceService transferEleganceService = transferEleganceApplication.getTransferEleganceService();
 
         if (subscription != null && !subscription.isUnsubscribed()) subscription.unsubscribe();
-
+        String token = transferEleganceApplication.getUserToken();
         subscription = transferEleganceService.createOrder(from.latitude+","+from.longitude, appointmentTime.getHour()+":"+appointmentTime.getMinute(),
                 countTime.getHour()+":"+countTime.getMinute(),transferEleganceApplication.getUserToken())
                 .observeOn(AndroidSchedulers.mainThread())
