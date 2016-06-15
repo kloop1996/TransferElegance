@@ -23,7 +23,7 @@ public class CountTimePicker extends DialogFragment
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current time as the default values for the picker
         int hour = MainActivity.appointmentTime.getHour();
-        int minute = MainActivity.appointmentTime.getHour();
+        int minute = MainActivity.appointmentTime.getMinute();
 
         TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), this, hour, minute,
                 DateFormat.is24HourFormat(getActivity()));

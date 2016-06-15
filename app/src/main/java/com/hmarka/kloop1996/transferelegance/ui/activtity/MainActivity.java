@@ -1,5 +1,6 @@
 package com.hmarka.kloop1996.transferelegance.ui.activtity;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.DownloadManager;
 import android.app.Fragment;
@@ -51,11 +52,16 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.hmarka.kloop1996.transferelegance.Constants;
 import com.hmarka.kloop1996.transferelegance.R;
+import com.hmarka.kloop1996.transferelegance.TransferEleganceApplication;
 import com.hmarka.kloop1996.transferelegance.core.TransferEleganceService;
 import com.hmarka.kloop1996.transferelegance.databinding.ActivityMainBinding;
 import com.hmarka.kloop1996.transferelegance.databinding.BookingFragmentBinding;
+import com.hmarka.kloop1996.transferelegance.model.ResponseCreateOrder;
+import com.hmarka.kloop1996.transferelegance.model.ResponseToken;
 import com.hmarka.kloop1996.transferelegance.model.TimeEntity;
+import com.hmarka.kloop1996.transferelegance.model.User;
 import com.hmarka.kloop1996.transferelegance.ui.dialog.EndTimePickerDialog;
+import com.hmarka.kloop1996.transferelegance.util.MultipartRequestBodyFactory;
 import com.hmarka.kloop1996.transferelegance.util.PriceUtil;
 import com.hmarka.kloop1996.transferelegance.util.TimeConverUtil;
 import com.hmarka.kloop1996.transferelegance.viewmodel.MainViewModel;
@@ -75,6 +81,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.http.Multipart;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerDragListener, RoutingListener {
 
@@ -103,6 +112,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private Drawer drawer;
     private Toolbar toolbar;
+
+    private Subscription subscription;
 
     public static MainActivity getInstance() {
         return instance;
@@ -428,7 +439,34 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         double divider = Constants.PRICE_HOUR_WAYTIME/3600.0;
 
+       // mainViewModel.setPrice((int)(currentDuration*divider)+PriceUtil.getPriceDownTime(appointmentTime,countTime));
         mainViewModel.setPrice((int)(currentDuration*divider));
+
+        final TransferEleganceApplication transferEleganceApplication = TransferEleganceApplication.get(this);
+        TransferEleganceService transferEleganceService = transferEleganceApplication.getTransferEleganceService();
+
+        if (subscription != null && !subscription.isUnsubscribed()) subscription.unsubscribe();
+
+        subscription = transferEleganceService.createOrder(from.latitude+","+from.longitude, appointmentTime.getHour()+":"+appointmentTime.getMinute(),
+                countTime.getHour()+":"+countTime.getMinute(),transferEleganceApplication.getUserToken())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(transferEleganceApplication.defaultSubscribeScheduler())
+                .subscribe(new Subscriber<ResponseCreateOrder>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Toast.makeText(MainActivity.this,"Error",Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNext(ResponseCreateOrder responseCreateOrder) {
+                        Toast.makeText(MainActivity.this,"Sucsess",Toast.LENGTH_SHORT).show();
+                    }
+                });
 
     }
 }

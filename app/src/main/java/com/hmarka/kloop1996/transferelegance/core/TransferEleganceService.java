@@ -1,5 +1,6 @@
 package com.hmarka.kloop1996.transferelegance.core;
 
+import com.hmarka.kloop1996.transferelegance.model.ResponseCreateOrder;
 import com.hmarka.kloop1996.transferelegance.model.ResponseDriverStatus;
 import com.hmarka.kloop1996.transferelegance.model.ResponseToken;
 
@@ -32,14 +33,15 @@ public interface TransferEleganceService {
     @Headers({
             "Content-Type : application/json"
     })
-    @GET("/api/nurse/get_driver_status")
+    @GET("/api/nurse/get_driver_status/")
     public rx.Observable<ResponseDriverStatus> getDriverStatus();
 
     @Headers({
             "Content-Type : application/json"
     })
-    @POST("/api/nurse/get_driver_status")
-    public rx.Observable<ResponseBody> createOrder();
+    @FormUrlEncoded
+    @POST("/api/nurse/create_order/")
+    public rx.Observable<ResponseCreateOrder> createOrder(@Field("client_location") String clientLocation,@Field("client_time")String clientTime, @Field("to_client_arrival_time")String toClientArrivalTime,@Field("token")String token);
 
     class Factory {
         public static TransferEleganceService create() {
