@@ -29,4 +29,6 @@ public class TimeEntity {
     public void setMinute(int minute) {
         this.minute = minute;
     }
+
+    public int getAbsoluteValue(){return hour*60+minute;}
 }

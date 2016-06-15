@@ -131,10 +131,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         toolbar = activityMainBinding.toolbar;
         setSupportActionBar(toolbar);
 
-        final ActionBar ab = getSupportActionBar();
-        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-        ab.setDisplayHomeAsUpEnabled(true);
-        ab.setTitle(R.string.second_name);
+//        final ActionBar ab = getSupportActionBar();
+//        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+//        ab.setDisplayHomeAsUpEnabled(true);
+//        ab.setTitle(R.string.second_name);
 
         drawer = new DrawerBuilder(this)
                 .withRootView(R.id.drawer_container)
@@ -440,7 +440,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         double divider = Constants.PRICE_HOUR_WAYTIME/3600.0;
 
        // mainViewModel.setPrice((int)(currentDuration*divider)+PriceUtil.getPriceDownTime(appointmentTime,countTime));
-        mainViewModel.setPrice((int)(currentDuration*divider));
+        mainViewModel.setPrice(((int)(currentDuration*divider))+(int)((countTime.getAbsoluteValue() - appointmentTime.getAbsoluteValue())*0.83));
 
         final TransferEleganceApplication transferEleganceApplication = TransferEleganceApplication.get(this);
         TransferEleganceService transferEleganceService = transferEleganceApplication.getTransferEleganceService();
