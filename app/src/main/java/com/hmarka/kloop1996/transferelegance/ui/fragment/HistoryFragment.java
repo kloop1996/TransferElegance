@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import com.google.android.gms.maps.MapFragment;
 import com.hmarka.kloop1996.transferelegance.R;
 import com.hmarka.kloop1996.transferelegance.databinding.HistoryFragmentBinding;
-import com.hmarka.kloop1996.transferelegance.viewmodel.BookingViewModel;
 import com.hmarka.kloop1996.transferelegance.viewmodel.HistoryViewModel;
 
 /**

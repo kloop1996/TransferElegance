@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.hmarka.kloop1996.transferelegance.R;
-import com.hmarka.kloop1996.transferelegance.viewmodel.BookingViewModel;
 
 /**
  * Created by kloop1996 on 13.06.2016.

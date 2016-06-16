@@ -185,6 +185,7 @@
                         android:id="@+id/map_container"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginBottom="40dp"
                         >
                     </FrameLayout>
 
@@ -192,11 +193,10 @@
                 <Button
                     android:enabled='@{viewModel.stateOrder}'
                     android:onClick='@{viewModel.stateDriver ? viewModel.onClickCall : viewModel.onClickTelephone }'
-                    android:textColorHint="@{viewModel.stateOrder ? @color/polyline_color : @color/input_register}"
+                    android:textColor="@{viewModel.stateOrder ? @color/polyline_color : @color/input_register}"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:text='@{viewModel.stateDriver ? "Call Alex"  : "Try calling Alex" }'
-                    android:textColor="@color/black"
                     android:background="@color/white"
                     android:layout_alignParentBottom="true"/>
             </RelativeLayout>

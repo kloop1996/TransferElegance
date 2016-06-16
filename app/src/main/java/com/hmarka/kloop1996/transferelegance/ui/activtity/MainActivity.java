@@ -57,7 +57,6 @@ import com.hmarka.kloop1996.transferelegance.R;
 import com.hmarka.kloop1996.transferelegance.TransferEleganceApplication;
 import com.hmarka.kloop1996.transferelegance.core.TransferEleganceService;
 import com.hmarka.kloop1996.transferelegance.databinding.ActivityMainBinding;
-import com.hmarka.kloop1996.transferelegance.databinding.BookingFragmentBinding;
 import com.hmarka.kloop1996.transferelegance.model.ResponseCreateOrder;
 import com.hmarka.kloop1996.transferelegance.model.ResponseDriverStatus;
 import com.hmarka.kloop1996.transferelegance.model.ResponseToken;
@@ -91,7 +90,8 @@ import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerDragListener, RoutingListener {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerDragListener,
+        GoogleMap.OnMyLocationButtonClickListener ,RoutingListener {
 
 
 
@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private GoogleMap mGoogleMap;
+    private boolean stateFrom=false;
 
     private LatLng from;
     private LatLng to;
@@ -282,24 +283,50 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         googleMap.setOnMarkerDragListener(this);
 
         mGoogleMap = googleMap;
-
+        mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
         mGoogleMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
             @Override
             public void onMyLocationChange(Location location) {
                 if (!startMap){
+
+
+
                     mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(),location.getLongitude())));
                     mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
                     from = new LatLng(location.getLatitude(),location.getLongitude());
 
+                    if (markerFrom != null) {
+                        markerFrom.remove();
+
+                    }
 
                     MarkerOptions markerOptions = new MarkerOptions();
+
+
                     markerOptions.position(new LatLng(location.getLatitude(),location.getLongitude()));
                     markerOptions.title(getResources().getString(R.string.from));
                     markerOptions.draggable(true);
-                    mGoogleMap.addMarker(markerOptions);
+                    markerFrom = mGoogleMap.addMarker(markerOptions);
+                    markerFrom.showInfoWindow();
 
                 }
                 startMap=true;
+
+                if (!stateFrom){
+                    if (markerFrom != null) {
+                        markerFrom.remove();
+
+                    }
+
+                    MarkerOptions markerOptions = new MarkerOptions();
+                    from = new LatLng(location.getLatitude(),location.getLongitude());
+
+                    markerOptions.position(new LatLng(location.getLatitude(),location.getLongitude()));
+                    markerOptions.title(getResources().getString(R.string.from));
+                    markerOptions.draggable(true);
+                    markerFrom = mGoogleMap.addMarker(markerOptions);
+                    markerFrom.showInfoWindow();
+                }
             }
         });
 
@@ -329,7 +356,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 }
 
-
+                stateFrom=true;
 
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(place.getLatLng());
@@ -424,7 +451,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMarkerDragStart(Marker marker) {
-
+        stateFrom=true;
     }
 
     @Override
@@ -561,7 +588,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     }
+
+    @Override
+    public boolean onMyLocationButtonClick() {
+        stateFrom=false;
+        return false;
     }
+}
 
 
 

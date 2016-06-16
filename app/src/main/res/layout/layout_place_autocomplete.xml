@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:hint="@string/dest_location"
         android:editable="false"
+        android:height="40dp"
         android:singleLine="true"
         android:textColor="@color/black"
         android:textSize="16sp" />
