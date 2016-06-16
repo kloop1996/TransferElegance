@@ -288,7 +288,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (!startMap){
                     mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(),location.getLongitude())));
                     mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+                    from = new LatLng(location.getLatitude(),location.getLongitude());
+
+
+                    MarkerOptions markerOptions = new MarkerOptions();
+                    markerOptions.position(new LatLng(location.getLatitude(),location.getLongitude()));
+                    markerOptions.title(getResources().getString(R.string.from));
+                    markerOptions.draggable(true);
+                    mGoogleMap.addMarker(markerOptions);
+
                 }
+                startMap=true;
             }
         });
 
@@ -304,6 +314,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.autocomplete_fragment_from);
         fromAutocomplete = (CustomPlaceAutoCompleteFragment)autocompleteFragment;
+        fromAutocomplete.setText("Your location");
         if (!mainViewModel.stateDriver.get()){
             fromAutocomplete.setEnable(false);
         }

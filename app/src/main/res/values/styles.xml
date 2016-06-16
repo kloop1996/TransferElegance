@@ -14,8 +14,8 @@
     <style name="Base.Theme.DesignDemo" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/settings_background</item>
         <item name="colorPrimaryDark">@color/settings_toolbar_background</item>
-        <item name="colorAccent">@color/btn_login</item>
         <item name="android:textColor">@color/text_color_background</item>
+
         <item name="android:windowBackground">@color/settings_background</item>
     </style>
 

@@ -24,7 +24,7 @@ package com.hmarka.kloop1996.transferelegance.ui.fragment;
 
 
 public class CustomPlaceAutoCompleteFragment extends PlaceAutocompleteFragment {
-
+    private CharSequence hint;
     private EditText editSearch;
      public void setEnable(boolean state){
          editSearch.setEnabled(state);
@@ -59,7 +59,7 @@ public class CustomPlaceAutoCompleteFragment extends PlaceAutocompleteFragment {
                 zzzG();
             }
         });
-
+        editSearch.setHint(hint);
         return var4;
     }
 
@@ -85,6 +85,8 @@ public class CustomPlaceAutoCompleteFragment extends PlaceAutocompleteFragment {
     }
 
     public void setHint(CharSequence hint) {
+        this.hint = hint;
+        if (editSearch!=null)
         this.editSearch.setHint(hint);
         this.zzaRh.setContentDescription(hint);
     }
