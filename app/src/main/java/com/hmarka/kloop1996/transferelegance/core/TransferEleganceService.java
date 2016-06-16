@@ -34,7 +34,7 @@ public interface TransferEleganceService {
             "Content-Type : application/json"
     })
     @GET("/api/nurse/get_driver_status/")
-    public rx.Observable<ResponseDriverStatus> getDriverStatus();
+    public Call<ResponseDriverStatus> getDriverStatus();
 
     @Headers({
             "Content-Type : application/json"

@@ -10,79 +10,54 @@ import java.util.Date;
 public class ResponseDriverStatus {
 
     @SerializedName("0")
-    private DriverStatus data;
+    private DriverStatus driverStatus;
 
     public ResponseDriverStatus(DriverStatus data) {
-        this.data = data;
+        this.driverStatus = data;
     }
 
     public DriverStatus getData() {
-        return data;
+        return driverStatus;
     }
 
     public void setData(DriverStatus data) {
-        this.data = data;
+        this.driverStatus = data;
     }
+
+    public boolean getStatus(){return driverStatus.data.active;}
 
     class DriverStatus{
         private String message;
 
-        @SerializedName("last_geo_update_time")
-        private Date lastGeoUpdateTime;
+        public DriverStat data;
+        class DriverStat{
+            @SerializedName("last_geo_update_time")
+            private Date lastGeoUpdateTime;
 
-        @SerializedName("is_active")
-        private boolean active;
+            @SerializedName("is_active")
+            public boolean active;
 
-        public DriverStatus(String message, Date lastGeoUpdateTime, boolean active) {
-            this.message = message;
-            this.lastGeoUpdateTime = lastGeoUpdateTime;
-            this.active = active;
+            public DriverStat(Date lastGeoUpdateTime, boolean active) {
+                this.lastGeoUpdateTime = lastGeoUpdateTime;
+                this.active = active;
+            }
+
+            public Date getLastGeoUpdateTime() {
+                return lastGeoUpdateTime;
+            }
+
+            public void setLastGeoUpdateTime(Date lastGeoUpdateTime) {
+                this.lastGeoUpdateTime = lastGeoUpdateTime;
+            }
+
+            public boolean isActive() {
+                return active;
+            }
+
+            public void setActive(boolean active) {
+                this.active = active;
+            }
         }
 
-        public String getMessage() {
-            return message;
-        }
-
-        public void setMessage(String message) {
-            this.message = message;
-        }
-
-        public Date getLastGeoUpdateTime() {
-            return lastGeoUpdateTime;
-        }
-
-        public void setLastGeoUpdateTime(Date lastGeoUpdateTime) {
-            this.lastGeoUpdateTime = lastGeoUpdateTime;
-        }
-
-        public boolean isActive() {
-            return active;
-        }
-
-        public void setActive(boolean active) {
-            this.active = active;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            DriverStatus that = (DriverStatus) o;
-
-            if (active != that.active) return false;
-            if (message != null ? !message.equals(that.message) : that.message != null)
-                return false;
-            return lastGeoUpdateTime != null ? lastGeoUpdateTime.equals(that.lastGeoUpdateTime) : that.lastGeoUpdateTime == null;
-
-        }
-
-        @Override
-        public int hashCode() {
-            int result = message != null ? message.hashCode() : 0;
-            result = 31 * result + (lastGeoUpdateTime != null ? lastGeoUpdateTime.hashCode() : 0);
-            result = 31 * result + (active ? 1 : 0);
-            return result;
-        }
     }
 }

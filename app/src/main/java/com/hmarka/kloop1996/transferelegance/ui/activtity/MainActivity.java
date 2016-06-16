@@ -5,10 +5,12 @@ import android.app.DialogFragment;
 import android.app.DownloadManager;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.databinding.DataBindingUtil;
 import android.location.Location;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
@@ -57,10 +59,13 @@ import com.hmarka.kloop1996.transferelegance.core.TransferEleganceService;
 import com.hmarka.kloop1996.transferelegance.databinding.ActivityMainBinding;
 import com.hmarka.kloop1996.transferelegance.databinding.BookingFragmentBinding;
 import com.hmarka.kloop1996.transferelegance.model.ResponseCreateOrder;
+import com.hmarka.kloop1996.transferelegance.model.ResponseDriverStatus;
 import com.hmarka.kloop1996.transferelegance.model.ResponseToken;
 import com.hmarka.kloop1996.transferelegance.model.TimeEntity;
 import com.hmarka.kloop1996.transferelegance.model.User;
 import com.hmarka.kloop1996.transferelegance.ui.dialog.EndTimePickerDialog;
+import com.hmarka.kloop1996.transferelegance.ui.fragment.CustomPlaceAutoCompleteFragment;
+import com.hmarka.kloop1996.transferelegance.ui.fragment.OfflineMessageFragment;
 import com.hmarka.kloop1996.transferelegance.util.MultipartRequestBodyFactory;
 import com.hmarka.kloop1996.transferelegance.util.PriceUtil;
 import com.hmarka.kloop1996.transferelegance.util.TimeConverUtil;
@@ -94,6 +99,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private MainViewModel mainViewModel;
     private ActivityMainBinding activityMainBinding;
 
+    private boolean startMap = false;
+
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private GoogleMap mGoogleMap;
@@ -113,7 +120,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Drawer drawer;
     private Toolbar toolbar;
 
+    private ProgressDialog pd;
+
     private Subscription subscription;
+    private CustomPlaceAutoCompleteFragment toAutocomplete;
+    private CustomPlaceAutoCompleteFragment fromAutocomplete;
 
     public static MainActivity getInstance() {
         return instance;
@@ -122,6 +133,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+
+        StrictMode.setThreadPolicy(policy);
+
         instance=this;
         activityMainBinding = DataBindingUtil.setContentView(this,R.layout.activity_main);
         mainViewModel = new MainViewModel(this);
@@ -158,75 +175,102 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 })
                 .build();
 
-        GoogleMapOptions options = new GoogleMapOptions();
-        options.compassEnabled(true);
-        options.useViewLifecycleInFragment(false);
+        pd = new ProgressDialog(this);
+        pd.setTitle("Check driver status");
+        pd.show();
 
-        MapFragment mMapFragment = MapFragment.newInstance(options);
-        mMapFragment.getMapAsync(this);
 
-        FragmentTransaction fragmentTransaction =
-                getFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.map_container, mMapFragment);
-        fragmentTransaction.commit();
+        final TransferEleganceApplication transferEleganceApplication = TransferEleganceApplication.get(this);
+        TransferEleganceService transferEleganceService = transferEleganceApplication.getTransferEleganceService();
+        ResponseDriverStatus responseDriverStatus = null;
+        try {
 
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .addApi(Places.GEO_DATA_API)
-                    .addApi(Places.PLACE_DETECTION_API)
-                    .build();
+
+           mainViewModel.stateDriver.set(transferEleganceService.getDriverStatus().execute().body().getStatus());
+        } catch (IOException e) {
+            mainViewModel.stateDriver.set(false);
         }
 
-        LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        pd.cancel();
 
+        if (!mainViewModel.stateDriver.get()) {
+            mainViewModel.stateOrder.set(true);
+            FragmentTransaction fragmentTransaction =
+                    getFragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.map_container, new OfflineMessageFragment());
+            fragmentTransaction.commit();
 
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(mLocationRequest);
+        }else {
 
-        PendingResult<LocationSettingsResult> result =
-                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient,
-                        builder.build());
+            GoogleMapOptions options = new GoogleMapOptions();
+            options.compassEnabled(true);
+            options.useViewLifecycleInFragment(false);
+            MapFragment mMapFragment = MapFragment.newInstance(options);
+            mMapFragment.getMapAsync(this);
 
-        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-            @Override
-            public void onResult(LocationSettingsResult result) {
-                final Status status = result.getStatus();
-                final LocationSettingsStates locationSettingsStates = result.getLocationSettingsStates();
-                switch (status.getStatusCode()) {
-                    case LocationSettingsStatusCodes.SUCCESS:
-                        // All location settings are satisfied. The client can
-                        // initialize location requests here.
+            FragmentTransaction fragmentTransaction =
+                    getFragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.map_container, mMapFragment);
+            fragmentTransaction.commit();
 
-                        break;
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        // Location settings are not satisfied, but this can be fixed
-                        // by showing the user a dialog.
-                        try {
-                            // Show the dialog by calling startResolutionForResult(),
-                            // and check the result in onActivityResult().
-                            status.startResolutionForResult(MainActivity.this, 2);
-                        } catch (IntentSender.SendIntentException e) {
-                            // Ignore the error.
-                        }
-                        break;
-                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        // Location settings are not satisfied. However, we have no way
-                        // to fix the settings so we won't show the dialog.
-
-                        break;
-
-                }
+            if (mGoogleApiClient == null) {
+                mGoogleApiClient = new GoogleApiClient.Builder(this)
+                        .addConnectionCallbacks(this)
+                        .addOnConnectionFailedListener(this)
+                        .addApi(LocationServices.API)
+                        .addApi(Places.GEO_DATA_API)
+                        .addApi(Places.PLACE_DETECTION_API)
+                        .build();
             }
-        });
 
+            LocationRequest mLocationRequest = new LocationRequest();
+            mLocationRequest.setInterval(10000);
+            mLocationRequest.setFastestInterval(5000);
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+
+            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                    .addLocationRequest(mLocationRequest);
+
+            PendingResult<LocationSettingsResult> result =
+                    LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient,
+                            builder.build());
+
+            result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+                @Override
+                public void onResult(LocationSettingsResult result) {
+                    final Status status = result.getStatus();
+                    final LocationSettingsStates locationSettingsStates = result.getLocationSettingsStates();
+                    switch (status.getStatusCode()) {
+                        case LocationSettingsStatusCodes.SUCCESS:
+                            // All location settings are satisfied. The client can
+                            // initialize location requests here.
+
+                            break;
+                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                            // Location settings are not satisfied, but this can be fixed
+                            // by showing the user a dialog.
+                            try {
+                                // Show the dialog by calling startResolutionForResult(),
+                                // and check the result in onActivityResult().
+                                status.startResolutionForResult(MainActivity.this, 2);
+                            } catch (IntentSender.SendIntentException e) {
+                                // Ignore the error.
+                            }
+                            break;
+                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                            // Location settings are not satisfied. However, we have no way
+                            // to fix the settings so we won't show the dialog.
+
+                            break;
+
+                    }
+                }
+            });
+
+
+        }
         initAutocompleteView();
-
 
     }
 
@@ -238,6 +282,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mGoogleMap = googleMap;
 
+        mGoogleMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+            @Override
+            public void onMyLocationChange(Location location) {
+                if (!startMap){
+                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(),location.getLongitude())));
+                    mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+                }
+            }
+        });
+
     }
 
     @Override
@@ -247,10 +301,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     private void initAutocompleteView(){
-        int x=10;
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.autocomplete_fragment_from);
-        autocompleteFragment.setHint(getResources().getString(R.string.from_hint));
+        fromAutocomplete = (CustomPlaceAutoCompleteFragment)autocompleteFragment;
+        if (!mainViewModel.stateDriver.get()){
+            fromAutocomplete.setEnable(false);
+        }
+
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -284,7 +341,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.autocomplete_fragment_to);
-        autocompleteFragment.setHint(getResources().getString(R.string.destination_hint));
+        toAutocomplete = (CustomPlaceAutoCompleteFragment)autocompleteFragment;
+        if (!mainViewModel.stateDriver.get())
+            toAutocomplete.setEnable(false);
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -324,11 +383,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onStart() {
         super.onStart();
+        if (mGoogleApiClient!=null)
         mGoogleApiClient.connect();
     }
 
     @Override
     public void onStop() {
+        if (mGoogleApiClient!=null)
         mGoogleApiClient.disconnect();
         super.onStop();
     }
@@ -442,6 +503,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
        // mainViewModel.setPrice((int)(currentDuration*divider)+PriceUtil.getPriceDownTime(appointmentTime,countTime));
         mainViewModel.setPrice(((int)(currentDuration*divider))+(int)((countTime.getAbsoluteValue() - appointmentTime.getAbsoluteValue())*0.83));
 
+        mainViewModel.stateOrder.set(true);
+
+
+    }
+
+    public void executeCall(){
         final TransferEleganceApplication transferEleganceApplication = TransferEleganceApplication.get(this);
         TransferEleganceService transferEleganceService = transferEleganceApplication.getTransferEleganceService();
 
@@ -468,5 +535,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 });
 
+
+
     }
-}
+    }
+
+
+

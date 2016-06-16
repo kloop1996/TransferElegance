@@ -17,5 +17,7 @@
     <string name="from">From</string>
     <string name="to">To</string>
     <string name="google_direction_key">AIzaSyDz2Ig33CPkAGL-ouQTH8QflAe58IlSpIg</string>
+    <string name="call_alex">Call alex</string>
+    <string name="number_alex">+41788739888</string>
 
 </resources>

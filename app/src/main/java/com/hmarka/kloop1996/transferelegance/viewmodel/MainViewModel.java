@@ -1,11 +1,17 @@
 package com.hmarka.kloop1996.transferelegance.viewmodel;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
+import android.net.Uri;
+import android.view.View;
 
+import com.hmarka.kloop1996.transferelegance.TransferEleganceApplication;
 import com.hmarka.kloop1996.transferelegance.model.TimeEntity;
-
-import rx.Observable;
+import com.hmarka.kloop1996.transferelegance.model.User;
+import com.hmarka.kloop1996.transferelegance.ui.activtity.MainActivity;
 
 /**
  * Created by kloop1996 on 09.06.2016.
@@ -13,11 +19,13 @@ import rx.Observable;
 public class MainViewModel implements ViewModel {
     private Context context;
 
-
+    public ObservableBoolean stateDriver;
+    public ObservableBoolean stateOrder;
     private double currentDistance;
     public ObservableField<String> getDistanse() {
         return distanse;
     }
+
 
     public void setDistanse(ObservableField<String> distanse) {
         this.distanse = distanse;
@@ -96,6 +104,8 @@ public class MainViewModel implements ViewModel {
     }
 
     public MainViewModel(Context context) {
+        stateDriver = new ObservableBoolean(true);
+        stateOrder = new ObservableBoolean(false);
         distanse = new ObservableField<String>("-");
 
         time= new ObservableField<String>("--:--");
@@ -104,6 +114,15 @@ public class MainViewModel implements ViewModel {
         appointment= new ObservableField<String>("--:--");
         waitUntil = new ObservableField<String>("--:--");;
         this.context = context;
+    }
+
+    public void onClickTelephone(View view) {
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "Your Phone_number"));
+        context.startActivity(intent);
+    }
+
+    public void onClickCall(View view){
+        ((MainActivity)context).executeCall();
     }
 
     @Override
