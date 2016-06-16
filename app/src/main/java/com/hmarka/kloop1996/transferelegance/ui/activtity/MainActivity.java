@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .withActionBarDrawerToggleAnimated(true)
                 .withDisplayBelowStatusBar(false)
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withName(R.string.history).withIcon(R.drawable.ic_menu).withTag(Constants.HISTORY_FRAGMENT),
+                        //new PrimaryDrawerItem().withName(R.string.history).withIcon(R.drawable.ic_menu).withTag(Constants.HISTORY_FRAGMENT),
                         new PrimaryDrawerItem().withName(R.string.settings).withIcon(R.drawable.ic_menu).withTag(Constants.SETTINGS_FRAGMENT)
 
                 )

@@ -28,8 +28,9 @@ public class SettingsActivity extends AppCompatActivity {
                 SettingsActivity.this.onBackPressed();
             }
         });
-//        setSupportActionBar(settingsActivityBinding.toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setSupportActionBar(settingsActivityBinding.toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("TransferElegance");
 
     }
 }

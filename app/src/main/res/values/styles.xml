@@ -7,9 +7,19 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
 
 
     </style>
+    <style name="Base.Theme.DesignDemo" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/settings_background</item>
+        <item name="colorPrimaryDark">@color/settings_toolbar_background</item>
+        <item name="colorAccent">@color/btn_login</item>
+        <item name="android:textColor">@color/text_color_background</item>
+        <item name="android:windowBackground">@color/settings_background</item>
+    </style>
+
+
 
     <style name="SettingsTextFields">
         <item name="android:layout_width">fill_parent</item>
@@ -17,6 +27,7 @@
         <item name="android:layout_marginBottom">0dp</item>
         <item name="android:padding">10dp</item>
         <item name="android:textColorHint">@color/input_login_hint</item>
+        <item name="android:textColor">@color/primary</item>
 
     </style>
 

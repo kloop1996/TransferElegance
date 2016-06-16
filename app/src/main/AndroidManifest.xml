@@ -21,7 +21,8 @@
         </activity>
 
         <activity android:name=".ui.activtity.SettingsActivity"
-            >
+            android:parentActivityName=".ui.activtity.MainActivity"
+            android:theme="@style/Base.Theme.DesignDemo">
 
         </activity>
 
