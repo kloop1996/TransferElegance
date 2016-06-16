@@ -56,6 +56,7 @@ public class CustomPlaceAutoCompleteFragment extends PlaceAutocompleteFragment {
         editSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 zzzG();
             }
         });
@@ -104,6 +105,7 @@ public class CustomPlaceAutoCompleteFragment extends PlaceAutocompleteFragment {
         int var1 = -1;
 
         try {
+
             Intent var2 = (new PlaceAutocomplete.IntentBuilder(2)).setBoundsBias(this.zzaRk).setFilter(this.zzaRl).zzeR(this.editSearch.getText().toString()).zziH(1).build(this.getActivity());
             this.startActivityForResult(var2, 1);
         } catch (GooglePlayServicesRepairableException var3) {

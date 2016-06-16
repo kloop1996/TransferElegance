@@ -9,9 +9,6 @@ import android.widget.TimePicker;
 
 import com.hmarka.kloop1996.transferelegance.model.TimeEntity;
 import com.hmarka.kloop1996.transferelegance.ui.activtity.MainActivity;
-import com.hmarka.kloop1996.transferelegance.ui.fragment.BookingFragment;
-
-import java.util.Calendar;
 
 /**
  * Created by kloop1996 on 14.06.2016.

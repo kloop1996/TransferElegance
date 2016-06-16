@@ -8,12 +8,14 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.places.Places;
-import com.hmarka.kloop1996.transferelegance.core.GoogleDirectionsService;
+import com.hmarka.kloop1996.transferelegance.model.SavePlace;
+import com.hmarka.kloop1996.transferelegance.util.SharedPreference;
+import com.google.android.gms.location.places.Place;
 import com.hmarka.kloop1996.transferelegance.core.TransferEleganceService;
 import com.hmarka.kloop1996.transferelegance.model.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import rx.Scheduler;
 import rx.schedulers.Schedulers;
@@ -29,8 +31,9 @@ public class TransferEleganceApplication extends Application {
     private SharedPreferences settings;
     private Scheduler defaultSubscribeScheduler;
     private TransferEleganceService transferEleganceService;
-    private GoogleDirectionsService googleDirectionsService;
 
+    private List<SavePlace> favouritePlaces;
+    private SharedPreference favouritePlacesSave;
 
     private User user;
     private String deviceToken;
@@ -89,19 +92,24 @@ public class TransferEleganceApplication extends Application {
 
     private void initConfiguration(){
         settings = getSharedPreferences(PREFS_NAME,MODE_PRIVATE);
-
+        favouritePlacesSave = new SharedPreference();
+        favouritePlaces = favouritePlacesSave.getFavorites(getApplicationContext());
+        if (favouritePlaces == null) {
+            favouritePlaces = new ArrayList<SavePlace>();
+        }
         if (settings.contains(Constants.NAME) && settings.contains(Constants.TELEPHONE)) {
-            user =  new User(settings.getString(Constants.NAME,""), settings.getString(Constants.TELEPHONE, ""));
+            user = new User(settings.getString(Constants.NAME, ""), settings.getString(Constants.TELEPHONE, ""));
         }
 
         if (settings.contains(Constants.USER_TOKEN)) {
-            userToken = settings.getString(Constants.USER_TOKEN,"") ;
+            userToken = settings.getString(Constants.USER_TOKEN, "");
         }
 
         deviceToken = Settings.Secure.getString(getApplicationContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
 
     }
+
 
     public boolean isUserLoad(){
         if (userToken!=null){
@@ -121,11 +129,15 @@ public class TransferEleganceApplication extends Application {
         editor.apply();
     }
 
-    public GoogleDirectionsService getGoogleDirectionsService() {
-        return googleDirectionsService;
+    public List<SavePlace> getFavouritePlaces() {
+        return favouritePlaces;
     }
 
-    public void setGoogleDirectionsService(GoogleDirectionsService googleDirectionsService) {
-        this.googleDirectionsService = googleDirectionsService;
+    public void setFavouritePlaces(List<SavePlace> favouritePlaces) {
+        this.favouritePlaces = favouritePlaces;
+    }
+
+    public void updateFavouritePlace() {
+        favouritePlacesSave.saveFavorites(getApplicationContext(), favouritePlaces);
     }
 }

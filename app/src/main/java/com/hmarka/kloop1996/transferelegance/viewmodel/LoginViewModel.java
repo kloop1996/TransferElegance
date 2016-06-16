@@ -62,6 +62,7 @@ public class LoginViewModel implements ViewModel {
     public void onClickLogin(View view) {
         if (name.length()==0 || phone.length() == 0) {
             Toast.makeText(context, R.string.EMPTY_FIELD_MESSAGE, Toast.LENGTH_SHORT).show();
+            return;
         }
 
         final TransferEleganceApplication transferEleganceApplication = TransferEleganceApplication.get(context);

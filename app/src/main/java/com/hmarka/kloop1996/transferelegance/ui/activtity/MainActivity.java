@@ -61,6 +61,7 @@ import com.hmarka.kloop1996.transferelegance.databinding.BookingFragmentBinding;
 import com.hmarka.kloop1996.transferelegance.model.ResponseCreateOrder;
 import com.hmarka.kloop1996.transferelegance.model.ResponseDriverStatus;
 import com.hmarka.kloop1996.transferelegance.model.ResponseToken;
+import com.hmarka.kloop1996.transferelegance.model.SavePlace;
 import com.hmarka.kloop1996.transferelegance.model.TimeEntity;
 import com.hmarka.kloop1996.transferelegance.model.User;
 import com.hmarka.kloop1996.transferelegance.ui.dialog.EndTimePickerDialog;
@@ -329,6 +330,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
 
 
+
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(place.getLatLng());
                 markerOptions.snippet(place.getAddress().toString());
@@ -364,6 +366,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 markerOptions.title(getResources().getString(R.string.to));
                 markerOptions.snippet(place.getAddress().toString());
                 to = place.getLatLng();
+
+                final TransferEleganceApplication transferEleganceApplication = TransferEleganceApplication.get(MainActivity.this);
+                if (transferEleganceApplication.getFavouritePlaces().indexOf(place)==-1){
+                    transferEleganceApplication.getFavouritePlaces().add(new SavePlace(place.getName().toString(),place.getLatLng()));
+                    transferEleganceApplication.updateFavouritePlace();
+
+                }
+
+
+
 
                 markerTo = mGoogleMap.addMarker(markerOptions);
                 markerTo.showInfoWindow();
