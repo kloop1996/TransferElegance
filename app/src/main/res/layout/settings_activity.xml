@@ -23,7 +23,7 @@
             android:titleTextColor="@color/white"
             />
 
-    <LinearLayout
+        <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center"
@@ -66,6 +66,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="300dp"
                 android:text="@string/ChangeUserData"
+                android:background="@drawable/shape_white"
                 android:textColor="@color/white_transparent"
                 android:onClick="@{viewModel.onClick}"
                 android:textStyle="bold"/>

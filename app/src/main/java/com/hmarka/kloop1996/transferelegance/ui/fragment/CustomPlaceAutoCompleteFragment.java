@@ -206,6 +206,14 @@ public class CustomPlaceAutoCompleteFragment extends PlaceAutocompleteFragment {
     }
 
     public void setTag(String tag){
+
+        if (tag.equals("from")){
+            editSearch.setHint("Your location");
+
+        }else{
+            editSearch.setHint("Destination point");
+        }
+
         this.tag=tag;
     }
 

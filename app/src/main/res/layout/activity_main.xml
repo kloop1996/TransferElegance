@@ -51,7 +51,7 @@
                         <TextView
                             android:id="@+id/text_repo_title"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="40dp"
                             android:ellipsize="end"
                             android:maxLines="1"
                             android:paddingLeft="12dp"
@@ -87,7 +87,7 @@
                         <TextView
                             android:id="@+id/text_repo_description"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="40dp"
                             android:paddingBottom="12dp"
                             android:paddingLeft="12dp"
                             android:paddingRight="12dp"
@@ -112,13 +112,52 @@
 
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/text_watchers_text"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:textSize="12sp"
+                            android:textColor="@color/secondary_text"
+                            android:text="Distance " />
+
+                        <TextView
+                            android:id="@+id/text_stars_text"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:textSize="12sp"
+                            android:textColor="@color/secondary_text"
+                            android:text="Time" />
+
+                        <TextView
+                            android:id="@+id/text_forks_text"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:textSize="12sp"
+                            android:textColor="@color/secondary_text"
+                            android:text="Fee" />
+
+                    </LinearLayout>
+
 
 
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
+                        android:layout_height="35dp"
                         android:orientation="horizontal">
+
+
 
                         <TextView
                             android:id="@+id/text_watchers"
@@ -126,8 +165,10 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
                             android:textColor="@color/secondary_text"
-                            android:text='@{"Distance \n" + viewModel.distanse}' />
+                            android:text='@{viewModel.distanse}' />
 
                         <TextView
                             android:id="@+id/text_stars"
@@ -135,8 +176,10 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
                             android:textColor="@color/secondary_text"
-                            android:text='@{"Time \n" + viewModel.time}' />
+                            android:text='@{viewModel.time}' />
 
                         <TextView
                             android:id="@+id/text_forks"
@@ -144,8 +187,10 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
                             android:textColor="@color/secondary_text"
-                            android:text='@{"Fee \n" + viewModel.fee}' />
+                            android:text='@{viewModel.fee}' />
 
                     </LinearLayout>
 

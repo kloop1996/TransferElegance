@@ -8,25 +8,31 @@
 
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:background="#303030">
 
-        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+           />
 
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_marginTop="20dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+            android:layout_weight="2"
+            android:orientation="horizontal"
+            >
 
             <TextView
 
-                android:layout_width="wrap_content"
+                android:layout_width="40dp"
                 android:layout_height="match_parent"
                 android:gravity="fill_horizontal"
-                android:text="from: "
+                android:text="From:"
                 android:layout_marginLeft="3dp"
+                android:textColor="@color/white_transparent"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
@@ -39,7 +45,11 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="left"
                 android:layout_weight="1"
-                android:text="safsafsafas"
+                android:text="Minsk"
+                android:maxLines="1"
+                android:textStyle="bold"
+                android:textSize="17sp"
+                android:textColor="@color/white_transparent"
                 android:layout_alignParentTop="true"
                 android:layout_toRightOf="@+id/textView2"
                 android:layout_toEndOf="@+id/textView2" />
@@ -49,26 +59,26 @@
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_marginTop="20dp"
-            android:layout_weight="1.5"
-            android:orientation="horizontal">
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            >
 
             <TextView
 
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:gravity="fill_horizontal"
-                android:text="date" />
+                android:gravity="left"
+                android:text="date"
+                android:textColor="@color/white_transparent"/>
 
             <TextView
-
-
                 android:id="@+id/date_text"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
-                android:text="06:03:2016" />
+                android:text="06:03:2016"
+                android:textColor="@color/white_transparent"/>
 
         </RelativeLayout>
 
@@ -83,24 +93,28 @@
 
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        android:background="#303030">
 
-        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            />
 
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="30dp"
             android:layout_marginTop="20dp"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:orientation="horizontal">
 
             <TextView
-
-                android:layout_width="wrap_content"
+                android:textColor="@color/white_transparent"
+                android:layout_width="40dp"
                 android:layout_height="match_parent"
                 android:gravity="fill_horizontal"
-                android:text="to: "
+                android:text="To:"
                 android:layout_marginLeft="3dp"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
@@ -108,13 +122,17 @@
                 android:id="@+id/textView3" />
 
             <TextView
+                android:textColor="@color/white_transparent"
                 android:layout_marginLeft="3dp"
                 android:id="@+id/to_text"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="left"
                 android:layout_weight="1"
-                android:text="safsafsafas"
+                android:text="Vilnius"
+                android:maxLines="1"
+                android:textStyle="bold"
+                android:textSize="17sp"
                 android:layout_alignParentTop="true"
                 android:layout_toRightOf="@+id/textView3"
                 android:layout_toEndOf="@+id/textView3" />
@@ -125,25 +143,25 @@
             android:layout_height="30dp"
             android:layout_marginTop="20dp"
             android:layout_weight="1"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            >
 
             <TextView
-
+                android:textColor="@color/white_transparent"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:gravity="fill_horizontal"
+                android:gravity="left"
                 android:text="price" />
 
             <TextView
 
-
+                android:textColor="@color/white_transparent"
                 android:id="@+id/price_text"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
-                android:text="06:03:2016" />
+                android:text="35" />
 
         </RelativeLayout>
 

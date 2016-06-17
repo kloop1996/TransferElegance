@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.databinding.DataBindingUtil;
+import android.location.Address;
 import android.location.Location;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
@@ -79,6 +80,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import io.nlopez.smartlocation.OnReverseGeocodingListener;
+import io.nlopez.smartlocation.SmartLocation;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -135,8 +138,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         StrictMode.setThreadPolicy(policy);
 
-        instance=this;
-        activityMainBinding = DataBindingUtil.setContentView(this,R.layout.activity_main);
+        instance = this;
+        activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         mainViewModel = new MainViewModel(this);
 
         activityMainBinding.setViewModel(mainViewModel);
@@ -165,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
 
-                        changeActivity((String)drawerItem.getTag());
+                        changeActivity((String) drawerItem.getTag());
                         return false;
                     }
                 })
@@ -182,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         try {
 
 
-           mainViewModel.stateDriver.set(transferEleganceService.getDriverStatus().execute().body().getStatus());
+            mainViewModel.stateDriver.set(transferEleganceService.getDriverStatus().execute().body().getStatus());
         } catch (IOException e) {
             mainViewModel.stateDriver.set(false);
         }
@@ -196,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             fragmentTransaction.add(R.id.map_container, new OfflineMessageFragment());
             fragmentTransaction.commit();
 
-        }else {
+        } else {
 
             GoogleMapOptions options = new GoogleMapOptions();
             options.compassEnabled(true);
@@ -266,8 +269,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         }
-        initAutocompleteView();
 
+
+        initAutocompleteView();
     }
 
     @Override
@@ -289,10 +293,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
                     from = new LatLng(location.getLatitude(),location.getLongitude());
 
+
+
                     if (markerFrom != null) {
                         markerFrom.remove();
 
                     }
+                    SmartLocation.with(MainActivity.this).geocoding()
+                            .reverse(location, new OnReverseGeocodingListener() {
+                                @Override
+                                public void onAddressResolved(Location location, List<Address> list) {
+                                    Toast.makeText(MainActivity.this,"1",Toast.LENGTH_SHORT);
+                                }
+                            }
+                );
 
                     MarkerOptions markerOptions = new MarkerOptions();
 
@@ -336,8 +350,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.autocomplete_fragment_from);
         fromAutocomplete = (CustomPlaceAutoCompleteFragment)autocompleteFragment;
-        fromAutocomplete.setTag("to");
-        fromAutocomplete.setText("Your location");
+        fromAutocomplete.setTag("from");
         if (!mainViewModel.stateDriver.get()){
             fromAutocomplete.setEnable(false);
         }
@@ -458,6 +471,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMarkerDragEnd(Marker marker) {
         from = marker.getPosition();
+        Location location = new Location("from");
+        location.setLatitude(from.latitude);
+
+        location.setLongitude(from.longitude);
+        SmartLocation.with(MainActivity.this).geocoding().
+                reverse(location, new OnReverseGeocodingListener() {
+                            @Override
+                            public void onAddressResolved(Location location, List<Address> list) {
+
+                                Toast.makeText(MainActivity.this,String.valueOf(list.size()),Toast.LENGTH_SHORT).show();
+                            }
+                        });
         marker.setSnippet("");
     }
 
@@ -540,14 +565,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (appointmentTime!=null)
             mainViewModel.setAppointmentTime(appointmentTime);
+
+        double divider = Constants.PRICE_HOUR_WAYTIME/3600.0;
+        double divider2= Constants.PRICE_HOUR_DOWNTIME/60.0;
+       // mainViewModel.setPrice((int)(currentDuration*divider)+PriceUtil.getPriceDownTime(appointmentTime,countTime));
+        currentPrice = ((int)(currentDuration*divider))+(int)((countTime.getAbsoluteValue()*divider2));
+
         if(countTime!=null){
+
+            int absoluteTime = appointmentTime.getAbsoluteValue() + countTime.getAbsoluteValue();
+
+            if (absoluteTime>=1440){
+                absoluteTime-=1440;
+            }
+
+            countTime.setHour(absoluteTime/60);
+            countTime.setMinute(absoluteTime%60);
+
             mainViewModel.setWaitUntilTime(countTime);
         }
 
-        double divider = Constants.PRICE_HOUR_WAYTIME/3600.0;
-
-       // mainViewModel.setPrice((int)(currentDuration*divider)+PriceUtil.getPriceDownTime(appointmentTime,countTime));
-        currentPrice = ((int)(currentDuration*divider))+(int)((countTime.getAbsoluteValue() - appointmentTime.getAbsoluteValue()));
         mainViewModel.setPrice(currentPrice);
 
         mainViewModel.stateOrder.set(true);

@@ -4,9 +4,11 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import android.text.format.DateFormat;
+import android.view.View;
 import android.widget.TimePicker;
 
 import com.hmarka.kloop1996.transferelegance.model.TimeEntity;
@@ -29,8 +31,15 @@ public class EndTimePickerDialog extends DialogFragment
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
 
-        TimePickerDialog timePickerDialog =  new TimePickerDialog(getActivity(), this, hour, minute,
+        final TimePickerDialog timePickerDialog =  new TimePickerDialog(getActivity(), this, hour, minute,
                 DateFormat.is24HourFormat(getActivity()));
+        timePickerDialog.setCanceledOnTouchOutside(false);
+        timePickerDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                timePickerDialog.getButton(Dialog.BUTTON_NEGATIVE).setVisibility(View.GONE);
+            }
+        });
         timePickerDialog.setTitle("Appointment time");
         return timePickerDialog;
     }
