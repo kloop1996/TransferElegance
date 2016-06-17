@@ -3,16 +3,14 @@ package com.hmarka.kloop1996.transferelegance;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
+import com.hmarka.kloop1996.transferelegance.model.HistoryEntity;
 import com.hmarka.kloop1996.transferelegance.model.SavePlace;
-import com.hmarka.kloop1996.transferelegance.util.SharedPreference;
-import com.google.android.gms.location.places.Place;
+import com.hmarka.kloop1996.transferelegance.util.SharedPreferenceFavourite;
 import com.hmarka.kloop1996.transferelegance.core.TransferEleganceService;
 import com.hmarka.kloop1996.transferelegance.model.User;
+import com.hmarka.kloop1996.transferelegance.util.SharedPrefernceHistory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +31,16 @@ public class TransferEleganceApplication extends Application {
     private TransferEleganceService transferEleganceService;
 
     private List<SavePlace> favouritePlaces;
-    private SharedPreference favouritePlacesSave;
+    private SharedPreferenceFavourite favouritePlacesSave;
+
+    public List<HistoryEntity> getHistories() {
+        return histories;
+    }
+
+    private List<HistoryEntity> histories;
+
+    public void setHistories(List<HistoryEntity> histories){this.histories=histories;}
+    private SharedPrefernceHistory historySave;
 
     private User user;
     private String deviceToken;
@@ -92,11 +99,21 @@ public class TransferEleganceApplication extends Application {
 
     private void initConfiguration(){
         settings = getSharedPreferences(PREFS_NAME,MODE_PRIVATE);
-        favouritePlacesSave = new SharedPreference();
+
+        favouritePlacesSave = new SharedPreferenceFavourite();
         favouritePlaces = favouritePlacesSave.getFavorites(getApplicationContext());
+
         if (favouritePlaces == null) {
             favouritePlaces = new ArrayList<SavePlace>();
         }
+
+        historySave = new SharedPrefernceHistory();
+        histories = historySave.getFavorites(getApplicationContext());
+
+        if (histories==null){
+            histories = new ArrayList<HistoryEntity>();
+        }
+
         if (settings.contains(Constants.NAME) && settings.contains(Constants.TELEPHONE)) {
             user = new User(settings.getString(Constants.NAME, ""), settings.getString(Constants.TELEPHONE, ""));
         }
@@ -129,7 +146,7 @@ public class TransferEleganceApplication extends Application {
         editor.apply();
     }
 
-    public List<SavePlace> getFavouritePlaces() {
+    public List<SavePlace> getFavourite() {
         return favouritePlaces;
     }
 
@@ -139,5 +156,9 @@ public class TransferEleganceApplication extends Application {
 
     public void updateFavouritePlace() {
         favouritePlacesSave.saveFavorites(getApplicationContext(), favouritePlaces);
+    }
+
+    public void updateHistory(){
+        historySave.saveFavorites(getApplicationContext(),histories);
     }
 }

@@ -15,12 +15,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SharedPreference {
+public class SharedPreferenceFavourite {
 
     public static final String PREFS_NAME = "PRODUCT_APP";
     public static final String FAVORITES = "Product_Favorite";
 
-    public SharedPreference() {
+    public SharedPreferenceFavourite() {
         super();
     }
 

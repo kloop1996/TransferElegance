@@ -1,9 +1,6 @@
 package com.hmarka.kloop1996.transferelegance.ui.activtity;
 
-import android.app.Activity;
 import android.app.DialogFragment;
-import android.app.DownloadManager;
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -17,6 +14,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+
 import android.view.View;
 import android.widget.Toast;
 
@@ -57,17 +55,14 @@ import com.hmarka.kloop1996.transferelegance.R;
 import com.hmarka.kloop1996.transferelegance.TransferEleganceApplication;
 import com.hmarka.kloop1996.transferelegance.core.TransferEleganceService;
 import com.hmarka.kloop1996.transferelegance.databinding.ActivityMainBinding;
+import com.hmarka.kloop1996.transferelegance.model.HistoryEntity;
 import com.hmarka.kloop1996.transferelegance.model.ResponseCreateOrder;
 import com.hmarka.kloop1996.transferelegance.model.ResponseDriverStatus;
-import com.hmarka.kloop1996.transferelegance.model.ResponseToken;
 import com.hmarka.kloop1996.transferelegance.model.SavePlace;
 import com.hmarka.kloop1996.transferelegance.model.TimeEntity;
-import com.hmarka.kloop1996.transferelegance.model.User;
 import com.hmarka.kloop1996.transferelegance.ui.dialog.EndTimePickerDialog;
 import com.hmarka.kloop1996.transferelegance.ui.fragment.CustomPlaceAutoCompleteFragment;
 import com.hmarka.kloop1996.transferelegance.ui.fragment.OfflineMessageFragment;
-import com.hmarka.kloop1996.transferelegance.util.MultipartRequestBodyFactory;
-import com.hmarka.kloop1996.transferelegance.util.PriceUtil;
 import com.hmarka.kloop1996.transferelegance.util.TimeConverUtil;
 import com.hmarka.kloop1996.transferelegance.viewmodel.MainViewModel;
 import com.mikepenz.materialdrawer.Drawer;
@@ -76,16 +71,14 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import java.io.IOException;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.http.Multipart;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -99,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private MainViewModel mainViewModel;
     private ActivityMainBinding activityMainBinding;
+    private int currentPrice;
 
     private boolean startMap = false;
 
@@ -163,8 +157,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .withDisplayBelowStatusBar(false)
                 .addDrawerItems(
                         //new PrimaryDrawerItem().withName(R.string.history).withIcon(R.drawable.ic_menu).withTag(Constants.HISTORY_FRAGMENT),
-                        new PrimaryDrawerItem().withName(R.string.settings).withIcon(R.drawable.ic_menu).withTag(Constants.SETTINGS_FRAGMENT)
-
+                        new PrimaryDrawerItem().withName(R.string.settings).withIcon(R.drawable.ic_menu).withTag(Constants.SETTINGS_FRAGMENT),
+                        new PrimaryDrawerItem().withName(R.string.history).withIcon(R.drawable.ic_menu).withTag(Constants.HISTORY_FRAGMENT)
                 )
                 .withSavedInstance(savedInstanceState)
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
@@ -342,6 +336,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.autocomplete_fragment_from);
         fromAutocomplete = (CustomPlaceAutoCompleteFragment)autocompleteFragment;
+        fromAutocomplete.setTag("to");
         fromAutocomplete.setText("Your location");
         if (!mainViewModel.stateDriver.get()){
             fromAutocomplete.setEnable(false);
@@ -384,6 +379,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         toAutocomplete = (CustomPlaceAutoCompleteFragment)autocompleteFragment;
         if (!mainViewModel.stateDriver.get())
             toAutocomplete.setEnable(false);
+        toAutocomplete.setTag("to");
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -395,8 +391,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 to = place.getLatLng();
 
                 final TransferEleganceApplication transferEleganceApplication = TransferEleganceApplication.get(MainActivity.this);
-                if (transferEleganceApplication.getFavouritePlaces().indexOf(place)==-1){
-                    transferEleganceApplication.getFavouritePlaces().add(new SavePlace(place.getName().toString(),place.getLatLng()));
+                if (transferEleganceApplication.getFavourite().indexOf(place) == -1) {
+                    transferEleganceApplication.getFavourite().add(new SavePlace(place.getName().toString(), place.getLatLng()));
                     transferEleganceApplication.updateFavouritePlace();
 
                 }
@@ -465,7 +461,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         marker.setSnippet("");
     }
 
-    private void notifySelectPlace() {
+    public void notifySelectPlace() {
         if (from != null && to != null) {
             Routing routing = new Routing.Builder()
                     .travelMode(AbstractRouting.TravelMode.DRIVING)
@@ -551,7 +547,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         double divider = Constants.PRICE_HOUR_WAYTIME/3600.0;
 
        // mainViewModel.setPrice((int)(currentDuration*divider)+PriceUtil.getPriceDownTime(appointmentTime,countTime));
-        mainViewModel.setPrice(((int)(currentDuration*divider))+(int)((countTime.getAbsoluteValue() - appointmentTime.getAbsoluteValue())*0.83));
+        currentPrice = ((int)(currentDuration*divider))+(int)((countTime.getAbsoluteValue() - appointmentTime.getAbsoluteValue()));
+        mainViewModel.setPrice(currentPrice);
 
         mainViewModel.stateOrder.set(true);
 
@@ -564,7 +561,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (subscription != null && !subscription.isUnsubscribed()) subscription.unsubscribe();
         String token = transferEleganceApplication.getUserToken();
-        subscription = transferEleganceService.createOrder(from.latitude+","+from.longitude, appointmentTime.getHour()+":"+appointmentTime.getMinute(),
+        subscription = transferEleganceService.createOrder(from.latitude + "," + from.longitude, to.latitude + "," + to.longitude, appointmentTime.getHour() + ":" + appointmentTime.getMinute(),
                 countTime.getHour()+":"+countTime.getMinute(),transferEleganceApplication.getUserToken())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(transferEleganceApplication.defaultSubscribeScheduler())
@@ -577,11 +574,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     @Override
                     public void onError(Throwable e) {
                         Toast.makeText(MainActivity.this,"Error",Toast.LENGTH_SHORT).show();
+
                     }
 
                     @Override
                     public void onNext(ResponseCreateOrder responseCreateOrder) {
                         Toast.makeText(MainActivity.this,"Sucsess",Toast.LENGTH_SHORT).show();
+                        final TransferEleganceApplication transferEleganceApplication = TransferEleganceApplication.get(MainActivity.this);
+
+                        DateFormat df = new SimpleDateFormat("yyyy.MM.dd");
+                        String date = df.format(Calendar.getInstance().getTime());
+
+
+                        transferEleganceApplication.getHistories().add(new HistoryEntity(fromAutocomplete.getTextValue(),toAutocomplete.getTextValue(), date, currentPrice));
+                        transferEleganceApplication.updateHistory();
                     }
                 });
 
@@ -593,6 +599,72 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onMyLocationButtonClick() {
         stateFrom=false;
         return false;
+    }
+
+    public void notifyFromFill(String value) {
+        int index = 0;
+        SavePlace place = new SavePlace();
+        for (SavePlace savePlace : TransferEleganceApplication.get(this).getFavourite()) {
+            if (savePlace.getName().equals(value)) {
+                place = savePlace;
+                break;
+            }
+            index++;
+        }
+
+        if (place != null) {
+            from = place.getLatLng();
+            stateFrom = true;
+            if (markerFrom != null) {
+                markerFrom.remove();
+
+            }
+
+            MarkerOptions markerOptions = new MarkerOptions();
+            from = new LatLng(place.getLatLng().latitude, place.getLatLng().longitude);
+
+            markerOptions.position(from);
+            markerOptions.title(getResources().getString(R.string.from));
+            markerOptions.draggable(true);
+            markerFrom = mGoogleMap.addMarker(markerOptions);
+            markerFrom.showInfoWindow();
+        }
+
+    }
+
+    public void notifyToFill(String tag) {
+
+        int index = 0;
+        SavePlace place = new SavePlace();
+        for (SavePlace savePlace : TransferEleganceApplication.get(this).getFavourite()) {
+            if (savePlace.getName().equals(tag)) {
+                place = savePlace;
+                break;
+            }
+            index++;
+        }
+
+        if (place != null) {
+            to = place.getLatLng();
+
+            if (markerTo != null) {
+                markerTo.remove();
+
+            }
+
+            MarkerOptions markerOptions = new MarkerOptions();
+            to = new LatLng(place.getLatLng().latitude, place.getLatLng().longitude);
+
+            markerOptions.position(to);
+            markerOptions.title(getResources().getString(R.string.to));
+            markerOptions.draggable(true);
+            markerTo = mGoogleMap.addMarker(markerOptions);
+            markerTo.showInfoWindow();
+
+            //переместить маркер
+        }
+
+
     }
 }
 

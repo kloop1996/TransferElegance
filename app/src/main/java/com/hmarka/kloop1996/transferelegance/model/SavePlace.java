@@ -14,6 +14,8 @@ public class SavePlace {
         this.latLng = latLng;
     }
 
+    public SavePlace(){;}
+
     public String getName() {
         return name;
     }

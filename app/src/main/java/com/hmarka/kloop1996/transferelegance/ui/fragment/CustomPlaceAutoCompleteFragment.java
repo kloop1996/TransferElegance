@@ -6,9 +6,14 @@ package com.hmarka.kloop1996.transferelegance.ui.fragment;
  import android.support.annotation.Nullable;
  import android.util.Log;
  import android.view.LayoutInflater;
+ import android.view.MotionEvent;
  import android.view.View;
  import android.view.ViewGroup;
+ import android.widget.AdapterView;
+ import android.widget.ArrayAdapter;
+ import android.widget.AutoCompleteTextView;
  import android.widget.EditText;
+ import android.widget.TextView;
 
  import com.google.android.gms.common.GoogleApiAvailability;
  import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -21,11 +26,17 @@ package com.hmarka.kloop1996.transferelegance.ui.fragment;
  import com.google.android.gms.location.places.ui.PlaceSelectionListener;
  import com.google.android.gms.maps.model.LatLngBounds;
  import com.hmarka.kloop1996.transferelegance.R;
+ import com.hmarka.kloop1996.transferelegance.TransferEleganceApplication;
+ import com.hmarka.kloop1996.transferelegance.model.SavePlace;
+ import com.hmarka.kloop1996.transferelegance.ui.activtity.MainActivity;
+
+ import java.util.List;
 
 
 public class CustomPlaceAutoCompleteFragment extends PlaceAutocompleteFragment {
+    private String tag;
     private CharSequence hint;
-    private EditText editSearch;
+    private AutoCompleteTextView editSearch;
      public void setEnable(boolean state){
          editSearch.setEnabled(state);
          if (!state)
@@ -47,19 +58,70 @@ public class CustomPlaceAutoCompleteFragment extends PlaceAutocompleteFragment {
     @Nullable
     private PlaceSelectionListener zzaRm;
 
+    public String getTextValue(){
+        return editSearch.getText().toString();
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View var4 = inflater.inflate(R.layout.layout_place_autocomplete, container, false);
 
-        editSearch = (EditText) var4.findViewById(R.id.editWorkLocation);
-        editSearch.setOnClickListener(new View.OnClickListener() {
+        editSearch = (AutoCompleteTextView) var4.findViewById(R.id.editWorkLocation);
+        editSearch.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
-
+            public boolean onLongClick(View v) {
                 zzzG();
+                return false;
             }
         });
+
+
+
+//        editSearch.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//
+//                editSearch.showDropDown();
+//                return true;
+//            }
+//        });
+
+        editSearch.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    editSearch.showDropDown();
+                }
+            }
+        });
+        editSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                if (tag.equals("from")){
+                    MainActivity.getInstance().notifyFromFill(((TextView)view).getText().toString());
+                }else{
+                    MainActivity.getInstance().notifyToFill(((TextView)view).getText().toString());
+                }
+
+                MainActivity.getInstance().notifySelectPlace();
+                //position = (int)id;
+            }
+        });
+
+        List<SavePlace> places = TransferEleganceApplication.get(getActivity()).getFavourite();
+        String [] items= new String[places.size()];
+        int index = 0;
+        for (SavePlace savePlace :places){
+            items[index]= savePlace.getName();
+            index++;
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_dropdown_item_1line,items);
+
+        editSearch.setAdapter(adapter);
         editSearch.setHint(hint);
         return var4;
     }
@@ -141,6 +203,10 @@ public class CustomPlaceAutoCompleteFragment extends PlaceAutocompleteFragment {
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void setTag(String tag){
+        this.tag=tag;
     }
 
 }

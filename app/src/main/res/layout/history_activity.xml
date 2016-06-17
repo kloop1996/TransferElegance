@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/history_text"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:textSize="30sp"
+
+        android:text="History"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:layout_marginTop="50dp"/>
+
+    <ListView
+        android:id="@+id/list_history"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="270dp"
+        android:layout_below="@id/history_text"
+        android:layout_marginBottom="70dp">
+
+    </ListView>
+
+    <Button
+        android:id="@+id/clear_button"
+        android:gravity="center"
+        android:text="Clear history"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/list_history"
+        android:layout_centerHorizontal="true" />
+
+
+</RelativeLayout>

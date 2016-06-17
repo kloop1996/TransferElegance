@@ -41,7 +41,7 @@ public interface TransferEleganceService {
     })
     @FormUrlEncoded
     @POST("/api/nurse/create_order/")
-    public rx.Observable<ResponseCreateOrder> createOrder(@Field("client_location") String clientLocation,@Field("client_time")String clientTime, @Field("to_client_arrival_time")String toClientArrivalTime,@Field("token")String token);
+    public rx.Observable<ResponseCreateOrder> createOrder(@Field("client_location") String clientLocation, @Field("nurse_location") String nurseLocation, @Field("client_time")String clientTime, @Field("to_client_arrival_time")String toClientArrivalTime,@Field("token")String token);
 
     class Factory {
         public static TransferEleganceService create() {
