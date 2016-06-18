@@ -21,7 +21,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         settingsActivityBinding = DataBindingUtil.setContentView(this, R.layout.settings_activity);
         settingsActivityBinding.setViewModel(new SettingsViewModel(this));
-        settingsActivityBinding.toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_keyboard_backspace));
+        settingsActivityBinding.toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha));
         settingsActivityBinding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

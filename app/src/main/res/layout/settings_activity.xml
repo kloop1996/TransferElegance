@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/settings"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
     <data>
+
         <variable
             name="viewModel"
             type="com.hmarka.kloop1996.transferelegance.viewmodel.SettingsViewModel" />
     </data>
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout="@+id/layout_content"
+        android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -20,59 +22,99 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/black"
             android:title="@string/app_name"
-            android:titleTextColor="@color/white"
-            />
+            android:titleTextColor="@color/white" />
 
-        <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:gravity="center"
-        android:padding="10dp">
+        <ImageView
+            android:id="@+id/settings_text"
+            android:layout_width="120dp"
+            android:layout_height="35dp"
+            android:layout_below="@+id/toolbar"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:src="@drawable/ic_setting_text" />
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:orientation="vertical"
-            android:layout_marginTop="50dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
+            android:layout_height="fill_parent"
+            >
 
-            <EditText
-                style="@style/SettingsTextFields"
-                android:id="@+id/nameEdit"
-                android:hint="@string/name_hint"
-                android:inputType="textEmailAddress"
-                android:text="@{viewModel.name}"
-                app:addTextChangedListener="@{viewModel.nameEditTextWatcher}"
-                />
+            <LinearLayout
+                android:layout_above="@+id/loginButton"
+                android:id="@+id/layout_content"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="vertical"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="30dp">
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    >
+                <ImageView
+                    android:id="@+id/avatar_image"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_avatar"
+                    android:layout_marginRight="7dp"
+                    android:layout_centerVertical="true"
+                    />
+                <EditText
+                    android:layout_toRightOf="@+id/avatar_image"
+                    android:id="@+id/nameEdit"
+                    style="@style/SettingsTextFields"
+                    android:hint="@string/name_hint"
+                    android:inputType="textEmailAddress"
+                    android:text="@{viewModel.name}"
+                    app:addTextChangedListener="@{viewModel.nameEditTextWatcher}" />
+                </RelativeLayout>
 
 
-            <EditText
-                style="@style/SettingsTextFields"
-                android:id="@+id/telephoneEdit"
-                android:hint="@string/telephone_hint"
-                android:inputType="phone"
-                android:text="@{viewModel.telephone}"
-                app:addTextChangedListener="@{viewModel.phoneEditTextWatcher}"
-                 />
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    >
+                    <ImageView
+                        android:id="@+id/phone_image"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/ic_phone"
+                        android:layout_marginRight="7dp"
+                        android:layout_centerVertical="true"
+
+                        />
+                <EditText
+                    android:layout_toRightOf="@+id/phone_image"
+                    android:id="@+id/telephoneEdit"
+                    style="@style/SettingsTextFields"
+                    android:hint="@string/telephone_hint"
+                    android:inputType="phone"
+                    android:text="@{viewModel.telephone}"
+                    app:addTextChangedListener="@{viewModel.phoneEditTextWatcher}" />
+                </RelativeLayout>
 
 
-            <!-- Login Button -->
+                <!-- Login Button -->
+
+
+            </LinearLayout>
 
             <Button
                 android:id="@+id/loginButton"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="300dp"
-                android:text="@string/ChangeUserData"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
                 android:background="@drawable/shape_white"
-                android:textColor="@color/white_transparent"
                 android:onClick="@{viewModel.onClick}"
-                android:textStyle="bold"/>
-        </LinearLayout>
-
-    </LinearLayout>
+                android:text="@string/ChangeUserData"
+                android:textColor="@color/white_transparent"
+                android:textStyle="bold"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="25dp" />
+        </RelativeLayout>
     </LinearLayout>
 
 </layout>

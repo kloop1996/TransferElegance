@@ -2,6 +2,7 @@ package com.hmarka.kloop1996.transferelegance.ui.activtity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,6 +39,19 @@ public class HistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.history_activity);
 
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar_history);
+
+                //@drawable/abc_ic_ab_back_mtrl_am_alpha
+
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HistoryActivity.this.onBackPressed();
+            }
+        });
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         historyEntities = TransferEleganceApplication.get(this).getHistories();
         ArrayList<Map<String, Object>> data = new ArrayList<Map<String, Object>>(

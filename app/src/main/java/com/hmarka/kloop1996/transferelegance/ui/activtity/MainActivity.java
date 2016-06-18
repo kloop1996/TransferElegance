@@ -3,6 +3,7 @@ package com.hmarka.kloop1996.transferelegance.ui.activtity;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.databinding.DataBindingUtil;
@@ -16,7 +17,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.directions.route.AbstractRouting;
@@ -152,16 +156,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setTitle(R.string.second_name);
 
+        LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = vi.inflate(R.layout.drawer_header, null);
+
+// fill in any details dynamically here
+        TextView textView = (TextView) v.findViewById(R.id.nurse_name);
+        textView.setText(TransferEleganceApplication.get(this).getUser().getName());
+
+
         drawer = new DrawerBuilder(this)
+                .withSliderBackgroundColor(getResources().getColor(R.color.settings_background))
+
+                .withScrollToTopAfterClick(true)
                 .withRootView(R.id.drawer_container)
                 .withToolbar(toolbar)
+                .withHeader(v)
                 .withCloseOnClick(true)
                 .withActionBarDrawerToggleAnimated(true)
                 .withDisplayBelowStatusBar(false)
                 .addDrawerItems(
                         //new PrimaryDrawerItem().withName(R.string.history).withIcon(R.drawable.ic_menu).withTag(Constants.HISTORY_FRAGMENT),
-                        new PrimaryDrawerItem().withName(R.string.settings).withIcon(R.drawable.ic_menu).withTag(Constants.SETTINGS_FRAGMENT),
-                        new PrimaryDrawerItem().withName(R.string.history).withIcon(R.drawable.ic_menu).withTag(Constants.HISTORY_FRAGMENT)
+                        new PrimaryDrawerItem().withName(R.string.settings).withIcon(R.drawable.ic_settings_white).withTag(Constants.SETTINGS_FRAGMENT).withTextColorRes(R.color.white).withSelectedColorRes(R.color.black),
+                        new PrimaryDrawerItem().withName(R.string.history).withIcon(R.drawable.ic_history).withTag(Constants.HISTORY_FRAGMENT).withTextColorRes(R.color.white)
                 )
                 .withSavedInstance(savedInstanceState)
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
@@ -172,7 +188,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         return false;
                     }
                 })
+                .withHeaderPadding(false)
+                .withSelectedItemByPosition(4)
                 .build();
+
+
 
         pd = new ProgressDialog(this);
         pd.setTitle("Check driver status");

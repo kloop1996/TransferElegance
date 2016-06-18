@@ -6,7 +6,7 @@
     <string name="INTERNET_ERROR_MESSAGE">Interner error</string>
     <string name="EMPTY_FIELD_MESSAGE">Empty fields</string>
     <string name="ChangeUserData">Change</string>
-    <string name="second_name">AlexTaxi</string>
+    <string name="second_name">TransferElegance</string>
     <string name="settings">SETTINGS</string>
     <string name="history">HISTORY</string>
     <string name ="offline_message">Sorry :( \n Alex is offline. Try call him</string>
@@ -19,5 +19,7 @@
     <string name="google_direction_key">AIzaSyDz2Ig33CPkAGL-ouQTH8QflAe58IlSpIg</string>
     <string name="call_alex">Call alex</string>
     <string name="number_alex">+41788739888</string>
+    <string name="history_up">HISTORY</string>
+    <string name="clear_history">Clear History</string>
 
 </resources>
