@@ -4,15 +4,20 @@ package com.hmarka.kloop1996.transferelegance.ui.fragment;
  import android.content.Intent;
  import android.os.Bundle;
  import android.support.annotation.Nullable;
+ import android.text.Editable;
+ import android.text.TextWatcher;
  import android.util.Log;
+ import android.view.KeyEvent;
  import android.view.LayoutInflater;
  import android.view.MotionEvent;
  import android.view.View;
  import android.view.ViewGroup;
+ import android.view.inputmethod.EditorInfo;
  import android.widget.AdapterView;
  import android.widget.ArrayAdapter;
  import android.widget.AutoCompleteTextView;
  import android.widget.EditText;
+ import android.widget.ImageButton;
  import android.widget.TextView;
 
  import com.google.android.gms.common.GoogleApiAvailability;
@@ -37,6 +42,8 @@ public class CustomPlaceAutoCompleteFragment extends PlaceAutocompleteFragment {
     private String tag;
     private CharSequence hint;
     private AutoCompleteTextView editSearch;
+    private ImageButton searchButton;
+
      public void setEnable(boolean state){
          editSearch.setEnabled(state);
          if (!state)
@@ -67,11 +74,46 @@ public class CustomPlaceAutoCompleteFragment extends PlaceAutocompleteFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View var4 = inflater.inflate(R.layout.layout_place_autocomplete, container, false);
 
+        searchButton = (ImageButton) var4.findViewById(R.id.button_search) ;
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                zzzG();
+            }
+        });
         editSearch = (AutoCompleteTextView) var4.findViewById(R.id.editWorkLocation);
+        editSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                searchButton.setVisibility(s.length() > 0 ? View.VISIBLE : View.GONE);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         editSearch.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 zzzG();
+                return false;
+            }
+        });
+
+        editSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    String username = editSearch.getText().toString();
+                    if (username.length() > 0) zzzG();
+                    return true;
+                }
                 return false;
             }
         });

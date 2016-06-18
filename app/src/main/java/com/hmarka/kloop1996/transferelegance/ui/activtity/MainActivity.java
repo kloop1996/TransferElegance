@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -93,8 +94,6 @@ import rx.android.schedulers.AndroidSchedulers;
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerDragListener,
         GoogleMap.OnMyLocationButtonClickListener ,RoutingListener {
 
-
-
     private static MainActivity instance;
 
     private MainViewModel mainViewModel;
@@ -159,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = vi.inflate(R.layout.drawer_header, null);
 
-// fill in any details dynamically here
+
         TextView textView = (TextView) v.findViewById(R.id.nurse_name);
         textView.setText(TransferEleganceApplication.get(this).getUser().getName());
 
@@ -723,6 +722,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     }
+
+    private void hideSoftKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
+    }
+
 }
 
 
