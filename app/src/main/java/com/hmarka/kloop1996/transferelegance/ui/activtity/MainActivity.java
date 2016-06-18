@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .addDrawerItems(
                         //new PrimaryDrawerItem().withName(R.string.history).withIcon(R.drawable.ic_menu).withTag(Constants.HISTORY_FRAGMENT),
                         new PrimaryDrawerItem().withName(R.string.settings).withIcon(R.drawable.ic_settings_white).withTag(Constants.SETTINGS_FRAGMENT).withTextColorRes(R.color.white).withSelectedColorRes(R.color.black),
-                        new PrimaryDrawerItem().withName(R.string.history).withIcon(R.drawable.ic_history).withTag(Constants.HISTORY_FRAGMENT).withTextColorRes(R.color.white)
+                        new PrimaryDrawerItem().withName(R.string.history).withIcon(R.drawable.ic_history).withTag(Constants.HISTORY_FRAGMENT).withTextColorRes(R.color.white).withSelectedColorRes(R.color.black)
                 )
                 .withSavedInstance(savedInstanceState)
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
