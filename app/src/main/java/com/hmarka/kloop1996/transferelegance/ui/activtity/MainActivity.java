@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private boolean startMap = false;
     private GoogleApiClient mGoogleApiClient;
     private GoogleMap mGoogleMap;
-    private boolean stateFrom = false;
+    private boolean stateFrom;
     private LatLng from;
     private LatLng to;
     private Marker markerFrom;
@@ -141,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         StrictMode.setThreadPolicy(policy);
 
+        stateFrom =false;
         instance = this;
         activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         mainViewModel = new MainViewModel(this);
@@ -302,57 +303,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mGoogleMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
             @Override
             public void onMyLocationChange(Location location) {
-                if (!startMap) {
 
-                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                    moveMapCamera(latLng);
+                if (!stateFrom){
 
-                    if (subscriptionReverseGeocode!=null){
-                        subscriptionReverseGeocode.unsubscribe();
-                    }
-
-                    subscriptionReverseGeocode = ReverseGeocodeService.getAddressAsync(MainActivity.this,location.getLatitude(), location.getLongitude())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribeOn(transferEleganceApplication.defaultSubscribeScheduler())
-                            .subscribe(new Subscriber<String>() {
-                        @Override
-                        public void onCompleted() {
-
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-
-                        }
-
-                        @Override
-                        public void onNext(String s) {
-                            fromAutocomplete.setText(s);
-                            markerFrom.setSnippet(s);
-                        }
-                    });
-                    from = latLng;
-
-
-                    if (markerFrom != null) {
-                        markerFrom.remove();
-
-                    }
-
-
-                    MarkerOptions markerOptions = new MarkerOptions();
-
-
-                    markerOptions.position(new LatLng(location.getLatitude(), location.getLongitude()));
-                    markerOptions.title(getResources().getString(R.string.from));
-                    markerOptions.draggable(true);
-                    markerFrom = mGoogleMap.addMarker(markerOptions);
-                    markerFrom.showInfoWindow();
-
-                }
-                startMap = true;
-
-                if (!stateFrom) {
                     if (markerFrom != null) {
                         markerFrom.remove();
 
@@ -375,7 +328,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                                 @Override
                                 public void onError(Throwable e) {
-                                    e.printStackTrace();
+
                                 }
 
                                 @Override
@@ -391,6 +344,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     markerOptions.draggable(true);
                     markerFrom = mGoogleMap.addMarker(markerOptions);
                     markerFrom.showInfoWindow();
+
+                    if (!startMap) {
+                        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                        moveMapCamera(latLng);
+                        startMap = true;
+                    }
+
                 }
             }
         });
@@ -462,14 +422,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 markerOptions.snippet(place.getAddress().toString());
                 to = place.getLatLng();
 
-
-
                 if (transferEleganceApplication.getFavourite().indexOf(place) == -1) {
                     transferEleganceApplication.getFavourite().add(new SavePlace(place.getName().toString(), place.getLatLng()));
                     transferEleganceApplication.updateFavouritePlace();
 
                 }
 
+                stateFrom = true;
 
                 markerTo = mGoogleMap.addMarker(markerOptions);
                 markerTo.showInfoWindow();
@@ -684,7 +643,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public boolean onMyLocationButtonClick() {
-        stateFrom = false;
+       // stateFrom = false;
         return false;
     }
 
@@ -733,7 +692,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (place != null) {
             to = place.getLatLng();
-
+            stateFrom = true;
             if (markerTo != null) {
                 markerTo.remove();
 
