@@ -8,6 +8,7 @@ import android.databinding.ObservableField;
 import android.net.Uri;
 import android.view.View;
 
+import com.hmarka.kloop1996.transferelegance.R;
 import com.hmarka.kloop1996.transferelegance.TransferEleganceApplication;
 import com.hmarka.kloop1996.transferelegance.model.TimeEntity;
 import com.hmarka.kloop1996.transferelegance.model.User;
@@ -117,7 +118,7 @@ public class MainViewModel implements ViewModel {
     }
 
     public void onClickTelephone(View view) {
-        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "Your Phone_number"));
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + context.getResources().getString(R.string.number_alex)));
         context.startActivity(intent);
     }
 

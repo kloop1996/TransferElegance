@@ -13,6 +13,8 @@ android {
 
     }
 
+
+
     dataBinding {
         enabled = true
     }

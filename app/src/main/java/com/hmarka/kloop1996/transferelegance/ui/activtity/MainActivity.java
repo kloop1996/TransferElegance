@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.databinding.DataBindingUtil;
 import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
@@ -17,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -34,6 +36,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.common.data.DataBufferObserver;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
@@ -59,6 +62,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.hmarka.kloop1996.transferelegance.Constants;
 import com.hmarka.kloop1996.transferelegance.R;
 import com.hmarka.kloop1996.transferelegance.TransferEleganceApplication;
+import com.hmarka.kloop1996.transferelegance.core.ReverseGeocodeService;
 import com.hmarka.kloop1996.transferelegance.core.TransferEleganceService;
 import com.hmarka.kloop1996.transferelegance.databinding.ActivityMainBinding;
 import com.hmarka.kloop1996.transferelegance.model.HistoryEntity;
@@ -76,57 +80,53 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
+
 import java.io.IOException;
 
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
-import io.nlopez.smartlocation.OnReverseGeocodingListener;
-import io.nlopez.smartlocation.SmartLocation;
+import java.util.List;
+import java.util.Locale;
+
+import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.subscriptions.CompositeSubscription;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerDragListener,
-        GoogleMap.OnMyLocationButtonClickListener ,RoutingListener {
-
-    private static MainActivity instance;
-
-    private MainViewModel mainViewModel;
-    private ActivityMainBinding activityMainBinding;
-    private int currentPrice;
-
-    private boolean startMap = false;
-
-    private GoogleApiClient mGoogleApiClient;
-    private Location mLastLocation;
-    private GoogleMap mGoogleMap;
-    private boolean stateFrom=false;
-
-    private LatLng from;
-    private LatLng to;
-
-    private Marker markerFrom;
-    private Marker markerTo;
+        GoogleMap.OnMyLocationButtonClickListener, RoutingListener {
 
     public static TimeEntity appointmentTime;
     public static TimeEntity countTime;
-
+    private static MainActivity instance;
+    TransferEleganceApplication transferEleganceApplication;
+    private MainViewModel mainViewModel;
+    private ActivityMainBinding activityMainBinding;
+    private int currentPrice;
+    private CompositeSubscription mSubscriptions;
+    private boolean startMap = false;
+    private GoogleApiClient mGoogleApiClient;
+    private GoogleMap mGoogleMap;
+    private boolean stateFrom = false;
+    private LatLng from;
+    private LatLng to;
+    private Marker markerFrom;
+    private Marker markerTo;
     private int currentDistanse;
     private int currentDuration;
-
+    private Polyline polyline;
     private Drawer drawer;
     private Toolbar toolbar;
-
-    private ProgressDialog pd;
-
     private Subscription subscription;
     private CustomPlaceAutoCompleteFragment toAutocomplete;
     private CustomPlaceAutoCompleteFragment fromAutocomplete;
+
+    private Subscription subscriptionReverseGeocode;
 
     public static MainActivity getInstance() {
         return instance;
@@ -144,6 +144,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         instance = this;
         activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         mainViewModel = new MainViewModel(this);
+
+       // String address = getAddress(this,53.552481, 28.079598);
 
         activityMainBinding.setViewModel(mainViewModel);
 
@@ -174,7 +176,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .withActionBarDrawerToggleAnimated(true)
                 .withDisplayBelowStatusBar(false)
                 .addDrawerItems(
-                        //new PrimaryDrawerItem().withName(R.string.history).withIcon(R.drawable.ic_menu).withTag(Constants.HISTORY_FRAGMENT),
                         new PrimaryDrawerItem().withName(R.string.settings).withIcon(R.drawable.ic_settings_white).withTag(Constants.SETTINGS_FRAGMENT).withTextColorRes(R.color.white).withSelectedColorRes(R.color.black),
                         new PrimaryDrawerItem().withName(R.string.history).withIcon(R.drawable.ic_history).withTag(Constants.HISTORY_FRAGMENT).withTextColorRes(R.color.white).withSelectedColorRes(R.color.black)
                 )
@@ -192,14 +193,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .build();
 
 
-
-        pd = new ProgressDialog(this);
-        pd.setTitle("Check driver status");
-        pd.show();
-
-
-        final TransferEleganceApplication transferEleganceApplication = TransferEleganceApplication.get(this);
+        transferEleganceApplication = TransferEleganceApplication.get(this);
         TransferEleganceService transferEleganceService = transferEleganceApplication.getTransferEleganceService();
+
         ResponseDriverStatus responseDriverStatus = null;
         try {
 
@@ -209,7 +205,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mainViewModel.stateDriver.set(false);
         }
 
-        pd.cancel();
 
         if (!mainViewModel.stateDriver.get()) {
             mainViewModel.stateOrder.set(true);
@@ -243,6 +238,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             LocationRequest mLocationRequest = new LocationRequest();
             mLocationRequest.setInterval(10000);
+
             mLocationRequest.setFastestInterval(5000);
             mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
@@ -301,54 +297,96 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mGoogleMap = googleMap;
         mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+
+
         mGoogleMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
             @Override
             public void onMyLocationChange(Location location) {
-                if (!startMap){
+                if (!startMap) {
 
+                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    moveMapCamera(latLng);
 
+                    if (subscriptionReverseGeocode!=null){
+                        subscriptionReverseGeocode.unsubscribe();
+                    }
 
-                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(),location.getLongitude())));
-                    mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
-                    from = new LatLng(location.getLatitude(),location.getLongitude());
+                    subscriptionReverseGeocode = ReverseGeocodeService.getAddressAsync(MainActivity.this,location.getLatitude(), location.getLongitude())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeOn(transferEleganceApplication.defaultSubscribeScheduler())
+                            .subscribe(new Subscriber<String>() {
+                        @Override
+                        public void onCompleted() {
 
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+
+                        }
+
+                        @Override
+                        public void onNext(String s) {
+                            fromAutocomplete.setText(s);
+                            markerFrom.setSnippet(s);
+                        }
+                    });
+                    from = latLng;
 
 
                     if (markerFrom != null) {
                         markerFrom.remove();
 
                     }
-                    SmartLocation.with(MainActivity.this).geocoding()
-                            .reverse(location, new OnReverseGeocodingListener() {
-                                @Override
-                                public void onAddressResolved(Location location, List<Address> list) {
-                                    Toast.makeText(MainActivity.this,"1",Toast.LENGTH_SHORT);
-                                }
-                            }
-                );
+
 
                     MarkerOptions markerOptions = new MarkerOptions();
 
 
-                    markerOptions.position(new LatLng(location.getLatitude(),location.getLongitude()));
+                    markerOptions.position(new LatLng(location.getLatitude(), location.getLongitude()));
                     markerOptions.title(getResources().getString(R.string.from));
                     markerOptions.draggable(true);
                     markerFrom = mGoogleMap.addMarker(markerOptions);
                     markerFrom.showInfoWindow();
 
                 }
-                startMap=true;
+                startMap = true;
 
-                if (!stateFrom){
+                if (!stateFrom) {
                     if (markerFrom != null) {
                         markerFrom.remove();
 
                     }
 
                     MarkerOptions markerOptions = new MarkerOptions();
-                    from = new LatLng(location.getLatitude(),location.getLongitude());
 
-                    markerOptions.position(new LatLng(location.getLatitude(),location.getLongitude()));
+                    if (subscriptionReverseGeocode!=null){
+                        subscriptionReverseGeocode.unsubscribe();
+                    }
+
+                    subscriptionReverseGeocode = ReverseGeocodeService.getAddressAsync(MainActivity.this,location.getLatitude(), location.getLongitude())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeOn(transferEleganceApplication.defaultSubscribeScheduler())
+                            .subscribe(new Subscriber<String>() {
+                                @Override
+                                public void onCompleted() {
+
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    e.printStackTrace();
+                                }
+
+                                @Override
+                                public void onNext(String s) {
+                                    fromAutocomplete.setText(s);
+                                    markerFrom.setSnippet(s);
+                                }
+                            });
+                    from = new LatLng(location.getLatitude(), location.getLongitude());
+
+                    markerOptions.position(new LatLng(location.getLatitude(), location.getLongitude()));
                     markerOptions.title(getResources().getString(R.string.from));
                     markerOptions.draggable(true);
                     markerFrom = mGoogleMap.addMarker(markerOptions);
@@ -365,12 +403,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
-    private void initAutocompleteView(){
+    private void initAutocompleteView() {
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.autocomplete_fragment_from);
-        fromAutocomplete = (CustomPlaceAutoCompleteFragment)autocompleteFragment;
+        fromAutocomplete = (CustomPlaceAutoCompleteFragment) autocompleteFragment;
         fromAutocomplete.setTag("from");
-        if (!mainViewModel.stateDriver.get()){
+        if (!mainViewModel.stateDriver.get()) {
             fromAutocomplete.setEnable(false);
         }
 
@@ -383,7 +421,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 }
 
-                stateFrom=true;
+                stateFrom = true;
 
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(place.getLatLng());
@@ -394,8 +432,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 markerFrom = mGoogleMap.addMarker(markerOptions);
                 markerFrom.showInfoWindow();
-                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(place.getLatLng()));
-                mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+
+                moveMapCamera(place.getLatLng());
 
                 notifySelectPlace();
             }
@@ -408,10 +446,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.autocomplete_fragment_to);
-        toAutocomplete = (CustomPlaceAutoCompleteFragment)autocompleteFragment;
+        toAutocomplete = (CustomPlaceAutoCompleteFragment) autocompleteFragment;
         if (!mainViewModel.stateDriver.get())
             toAutocomplete.setEnable(false);
+
         toAutocomplete.setTag("to");
+
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -422,7 +462,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 markerOptions.snippet(place.getAddress().toString());
                 to = place.getLatLng();
 
-                final TransferEleganceApplication transferEleganceApplication = TransferEleganceApplication.get(MainActivity.this);
+
+
                 if (transferEleganceApplication.getFavourite().indexOf(place) == -1) {
                     transferEleganceApplication.getFavourite().add(new SavePlace(place.getName().toString(), place.getLatLng()));
                     transferEleganceApplication.updateFavouritePlace();
@@ -430,12 +471,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
 
 
-
-
                 markerTo = mGoogleMap.addMarker(markerOptions);
                 markerTo.showInfoWindow();
-                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(place.getLatLng()));
-                mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+
+                moveMapCamera(place.getLatLng());
 
                 notifySelectPlace();
             }
@@ -461,14 +500,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onStart() {
         super.onStart();
-        if (mGoogleApiClient!=null)
-        mGoogleApiClient.connect();
+        if (mGoogleApiClient != null)
+            mGoogleApiClient.connect();
     }
 
     @Override
     public void onStop() {
-        if (mGoogleApiClient!=null)
-        mGoogleApiClient.disconnect();
+        if (mGoogleApiClient != null)
+            mGoogleApiClient.disconnect();
         super.onStop();
     }
 
@@ -479,7 +518,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMarkerDragStart(Marker marker) {
-        stateFrom=true;
+        stateFrom = true;
     }
 
     @Override
@@ -494,14 +533,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         location.setLatitude(from.latitude);
 
         location.setLongitude(from.longitude);
-        SmartLocation.with(MainActivity.this).geocoding().
-                reverse(location, new OnReverseGeocodingListener() {
-                            @Override
-                            public void onAddressResolved(Location location, List<Address> list) {
-
-                                Toast.makeText(MainActivity.this,String.valueOf(list.size()),Toast.LENGTH_SHORT).show();
-                            }
-                        });
         marker.setSnippet("");
     }
 
@@ -514,8 +545,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .key(getResources().getString(R.string.google_direction_key))
                     .build();
             routing.execute();
+
             DialogFragment fragmentDialog = new EndTimePickerDialog();
-            fragmentDialog.show(getFragmentManager(),"");
+            fragmentDialog.show(getFragmentManager(), "");
         }
     }
 
@@ -542,23 +574,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         polyOptions.width(25);
         polyOptions.color(R.color.polyline_color);
         polyOptions.addAll(route.get(i).getPoints());
-        for (LatLng latLng : route.get(i).getPoints()){
+        for (LatLng latLng : route.get(i).getPoints()) {
             latLngBuilder.include(latLng);
         }
-        Polyline polyline = mGoogleMap.addPolyline(polyOptions);
+
+        if (polyline != null)
+            polyline.remove();
+
+
+        polyline = mGoogleMap.addPolyline(polyOptions);
+
         polylines.add(polyline);
         route.get(i);
-        //Toast.makeText(this, "Route " + (i + 1) + ": distance - " + route.get(0).getDistanceValue() + ": duration - " + route.get(i).getDurationValue(), Toast.LENGTH_SHORT).show();
 
         mainViewModel.setDistance(route.get(0).getDistanceValue());
         currentDistanse = route.get(0).getDistanceValue();
-        currentDuration=route.get(0).getDurationValue();
+        currentDuration = route.get(0).getDurationValue();
         mainViewModel.setTime(TimeConverUtil.getTimeEntity(route.get(0).getDurationValue()));
 
-        LatLngBounds latLngBounds = latLngBuilder.build();
-        int size = getResources().getDisplayMetrics().widthPixels;
-        CameraUpdate track = CameraUpdateFactory.newLatLngBounds(latLngBounds,size,size,25);
-        mGoogleMap.moveCamera(track);
+        moveMapCamera(latLngBuilder.build());
 
 
     }
@@ -568,8 +602,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    private void changeActivity(String tag){
-        switch (tag){
+    private void changeActivity(String tag) {
+        switch (tag) {
             case Constants.SETTINGS_FRAGMENT:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
@@ -580,26 +614,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    public void notifySetTime(){
+    public void notifySetTime() {
 
-        if (appointmentTime!=null)
+        if (appointmentTime != null)
             mainViewModel.setAppointmentTime(appointmentTime);
 
-        double divider = Constants.PRICE_HOUR_WAYTIME/3600.0;
-        double divider2= Constants.PRICE_HOUR_DOWNTIME/60.0;
-       // mainViewModel.setPrice((int)(currentDuration*divider)+PriceUtil.getPriceDownTime(appointmentTime,countTime));
-        currentPrice = ((int)(currentDuration*divider))+(int)((countTime.getAbsoluteValue()*divider2));
+        double divider = Constants.PRICE_HOUR_WAYTIME / 3600.0;
+        double divider2 = Constants.PRICE_HOUR_DOWNTIME / 60.0;
+        // mainViewModel.setPrice((int)(currentDuration*divider)+PriceUtil.getPriceDownTime(appointmentTime,countTime));
+        currentPrice = ((int) (currentDuration * divider)) + (int) ((countTime.getAbsoluteValue() * divider2));
 
-        if(countTime!=null){
+        if (countTime != null) {
 
             int absoluteTime = appointmentTime.getAbsoluteValue() + countTime.getAbsoluteValue();
 
-            if (absoluteTime>=1440){
-                absoluteTime-=1440;
+            if (absoluteTime >= 1440) {
+                absoluteTime -= 1440;
             }
 
-            countTime.setHour(absoluteTime/60);
-            countTime.setMinute(absoluteTime%60);
+            countTime.setHour(absoluteTime / 60);
+            countTime.setMinute(absoluteTime % 60);
 
             mainViewModel.setWaitUntilTime(countTime);
         }
@@ -611,14 +645,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    public void executeCall(){
-        final TransferEleganceApplication transferEleganceApplication = TransferEleganceApplication.get(this);
+    public void executeCall() {
         TransferEleganceService transferEleganceService = transferEleganceApplication.getTransferEleganceService();
 
         if (subscription != null && !subscription.isUnsubscribed()) subscription.unsubscribe();
         String token = transferEleganceApplication.getUserToken();
         subscription = transferEleganceService.createOrder(from.latitude + "," + from.longitude, to.latitude + "," + to.longitude, appointmentTime.getHour() + ":" + appointmentTime.getMinute(),
-                countTime.getHour()+":"+countTime.getMinute(),transferEleganceApplication.getUserToken())
+                countTime.getHour() + ":" + countTime.getMinute(), transferEleganceApplication.getUserToken())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(transferEleganceApplication.defaultSubscribeScheduler())
                 .subscribe(new Subscriber<ResponseCreateOrder>() {
@@ -629,38 +662,36 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(MainActivity.this,"Error",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
 
                     }
 
                     @Override
                     public void onNext(ResponseCreateOrder responseCreateOrder) {
-                        Toast.makeText(MainActivity.this,"Sucsess",Toast.LENGTH_SHORT).show();
-                        final TransferEleganceApplication transferEleganceApplication = TransferEleganceApplication.get(MainActivity.this);
-
+                        Toast.makeText(MainActivity.this, "Sucsess", Toast.LENGTH_SHORT).show();
+                        responseCreateOrder.getOrderId();
                         DateFormat df = new SimpleDateFormat("yyyy.MM.dd");
                         String date = df.format(Calendar.getInstance().getTime());
 
 
-                        transferEleganceApplication.getHistories().add(new HistoryEntity(fromAutocomplete.getTextValue(),toAutocomplete.getTextValue(), date, currentPrice));
+                        transferEleganceApplication.getHistories().add(new HistoryEntity(fromAutocomplete.getTextValue(), toAutocomplete.getTextValue(), date, currentPrice));
                         transferEleganceApplication.updateHistory();
                     }
                 });
-
 
 
     }
 
     @Override
     public boolean onMyLocationButtonClick() {
-        stateFrom=false;
+        stateFrom = false;
         return false;
     }
 
     public void notifyFromFill(String value) {
         int index = 0;
         SavePlace place = new SavePlace();
-        for (SavePlace savePlace : TransferEleganceApplication.get(this).getFavourite()) {
+        for (SavePlace savePlace : transferEleganceApplication.getFavourite()) {
             if (savePlace.getName().equals(value)) {
                 place = savePlace;
                 break;
@@ -727,6 +758,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
     }
+
+    private void moveMapCamera(LatLngBounds latLngBounds) {
+        int size = getResources().getDisplayMetrics().widthPixels;
+
+        CameraUpdate track = CameraUpdateFactory.newLatLngBounds(latLngBounds, size, size, 25);
+
+        mGoogleMap.moveCamera(track);
+
+    }
+
+    private void moveMapCamera(LatLng latLng) {
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+    }
+
+    private void calculateDistance() {
+
+    }
+
+
 
 }
 

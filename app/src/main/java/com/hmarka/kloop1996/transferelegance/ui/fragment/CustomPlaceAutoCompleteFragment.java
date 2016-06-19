@@ -106,6 +106,13 @@ public class CustomPlaceAutoCompleteFragment extends PlaceAutocompleteFragment {
             }
         });
 
+        editSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editSearch.showDropDown();
+            }
+        });
+
         editSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -129,14 +136,14 @@ public class CustomPlaceAutoCompleteFragment extends PlaceAutocompleteFragment {
 //            }
 //        });
 
-        editSearch.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus){
-                    editSearch.showDropDown();
-                }
-            }
-        });
+//        editSearch.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                if (hasFocus){
+//                    editSearch.showDropDown();
+//                }
+//            }
+//        });
         editSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
