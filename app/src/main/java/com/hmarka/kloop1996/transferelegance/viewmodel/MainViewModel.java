@@ -169,7 +169,7 @@ public class MainViewModel implements ViewModel {
     }
 
     public void onClickCall(View view){
-        ((MainActivity)context).executeCall();
+        ((MainActivity)context).executeCall(view);
     }
 
     @Override

@@ -39,7 +39,6 @@
         <item name="android:layout_marginBottom">0dp</item>
         <item name="android:padding">10dp</item>
         <item name="android:textColorHint">@color/input_login_hint</item>
-        <item name="android:textColor">@color/primary</item>
 
     </style>
 

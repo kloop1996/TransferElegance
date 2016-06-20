@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -15,6 +16,7 @@ import android.os.CountDownTimer;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -614,7 +616,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    public void executeCall() {
+    public void executeCall(final  View view) {
         final TransferEleganceService transferEleganceService = transferEleganceApplication.getTransferEleganceService();
 
         if (subscription != null && !subscription.isUnsubscribed()) subscription.unsubscribe();
@@ -637,6 +639,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     @Override
                     public void onNext(final ResponseCreateOrder responseCreateOrder) {
+
+                        Snackbar snackbar = Snackbar
+                                .make(view, "Success", Snackbar.LENGTH_LONG);
+
+                        View sbView = snackbar.getView();
+                        TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+                        textView.setTextColor(Color.YELLOW);
+                        snackbar.show();
+
                         Toast.makeText(MainActivity.this, "Sucsess"+String.valueOf(responseCreateOrder.getOrderId()), Toast.LENGTH_SHORT).show();
 
                         mainViewModel.autocopleteVisible.set(View.INVISIBLE);
