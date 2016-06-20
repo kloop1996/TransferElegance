@@ -48,7 +48,40 @@
 
                     android:background="@color/white">
 
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="80dp"
+                            android:visibility='@{viewModel.timerVisible}'
+                            >
+                            <TextView
+                                android:id="@+id/hint_time"
+
+                                android:layout_centerVertical="true"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="20sp"
+                                android:gravity="center"
+                                android:text="Waiting for answer..."/>
+
+                            <TextView
+                                android:layout_below="@+id/hint_time"
+                                android:layout_centerVertical="true"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="20sp"
+                                android:gravity="center"
+                                android:text='@{viewModel.textTimer}'/>
+
+                        </RelativeLayout>
+
+
                     <LinearLayout
+                        android:visibility='@{viewModel.autocopleteVisible}'
+                        android:id="@+id/autocomplete_content"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
@@ -77,7 +110,8 @@
                     </LinearLayout>
 
                     <LinearLayout
-
+                        android:visibility='@{viewModel.autocopleteVisible}'
+                        android:layout_below="@+id/autocomplete_content"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -111,6 +145,7 @@
                             android:layout_height="match_parent" />
 
                     </LinearLayout>
+                    </RelativeLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"

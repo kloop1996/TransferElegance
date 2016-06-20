@@ -4,16 +4,19 @@ import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.databinding.DataBindingUtil;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.CountDownTimer;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -68,8 +71,10 @@ import com.hmarka.kloop1996.transferelegance.databinding.ActivityMainBinding;
 import com.hmarka.kloop1996.transferelegance.model.HistoryEntity;
 import com.hmarka.kloop1996.transferelegance.model.ResponseCreateOrder;
 import com.hmarka.kloop1996.transferelegance.model.ResponseDriverStatus;
+import com.hmarka.kloop1996.transferelegance.model.ResponseStatusOrder;
 import com.hmarka.kloop1996.transferelegance.model.SavePlace;
 import com.hmarka.kloop1996.transferelegance.model.TimeEntity;
+import com.hmarka.kloop1996.transferelegance.ui.dialog.DialogFactory;
 import com.hmarka.kloop1996.transferelegance.ui.dialog.EndTimePickerDialog;
 import com.hmarka.kloop1996.transferelegance.ui.fragment.CustomPlaceAutoCompleteFragment;
 import com.hmarka.kloop1996.transferelegance.ui.fragment.OfflineMessageFragment;
@@ -91,11 +96,14 @@ import java.util.Calendar;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
+import rx.Scheduler;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 import rx.subscriptions.CompositeSubscription;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerDragListener,
@@ -123,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Drawer drawer;
     private Toolbar toolbar;
     private Subscription subscription;
+    private Subscription statusSubsription;
     private CustomPlaceAutoCompleteFragment toAutocomplete;
     private CustomPlaceAutoCompleteFragment fromAutocomplete;
 
@@ -335,6 +344,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 public void onNext(String s) {
                                     fromAutocomplete.setText(s);
                                     markerFrom.setSnippet(s);
+                                    markerFrom.showInfoWindow();
                                 }
                             });
                     from = new LatLng(location.getLatitude(), location.getLongitude());
@@ -605,7 +615,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void executeCall() {
-        TransferEleganceService transferEleganceService = transferEleganceApplication.getTransferEleganceService();
+        final TransferEleganceService transferEleganceService = transferEleganceApplication.getTransferEleganceService();
 
         if (subscription != null && !subscription.isUnsubscribed()) subscription.unsubscribe();
         String token = transferEleganceApplication.getUserToken();
@@ -626,11 +636,84 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
 
                     @Override
-                    public void onNext(ResponseCreateOrder responseCreateOrder) {
-                        Toast.makeText(MainActivity.this, "Sucsess", Toast.LENGTH_SHORT).show();
+                    public void onNext(final ResponseCreateOrder responseCreateOrder) {
+                        Toast.makeText(MainActivity.this, "Sucsess"+String.valueOf(responseCreateOrder.getOrderId()), Toast.LENGTH_SHORT).show();
+
+                        mainViewModel.autocopleteVisible.set(View.INVISIBLE);
+                        mainViewModel.timerVisible.set(View.VISIBLE);
+                        mainViewModel.stateOrder.set(false);
+                        final CountDownTimer countDownTimer = new CountDownTimer(180000, 1000) {
+
+                            public void onTick(long millisUntilFinished) {
+                                mainViewModel.updateTime();
+                            }
+
+                            public void onFinish() {
+                                mainViewModel.autocopleteVisible.set(View.VISIBLE);
+                                mainViewModel.timerVisible.set(View.INVISIBLE);
+                                mainViewModel.stateOrder.set(true);
+                                if (statusSubsription!=null)
+                                    statusSubsription.unsubscribe();
+                            }
+                        }.start();
+
+
                         responseCreateOrder.getOrderId();
                         DateFormat df = new SimpleDateFormat("yyyy.MM.dd");
                         String date = df.format(Calendar.getInstance().getTime());
+                        statusSubsription = rx.Observable.interval(10,TimeUnit.SECONDS)
+                                .flatMap(new Func1<Long, Observable<ResponseStatusOrder>>() {
+                                    @Override
+                                    public Observable<ResponseStatusOrder> call(Long aLong) {
+                                        return transferEleganceService.getStatusOrderById(String.valueOf(responseCreateOrder.getOrderId()),transferEleganceApplication.getUserToken());
+                                    }
+                                })
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribeOn(transferEleganceApplication.defaultSubscribeScheduler())
+                                .subscribe(new Subscriber<ResponseStatusOrder>() {
+                                    @Override
+                                    public void onCompleted() {
+
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable e) {
+
+                                    }
+
+                                    @Override
+                                    public void onNext(ResponseStatusOrder responseStatusOrder) {
+                                        if (responseStatusOrder.getStatus()!=null){
+
+                                            countDownTimer.cancel();
+
+                                            mainViewModel.autocopleteVisible.set(View.VISIBLE);
+                                            mainViewModel.timerVisible.set(View.INVISIBLE);
+                                            mainViewModel.stateOrder.set(true);
+
+                                            AlertDialog.Builder builder;
+                                            builder = new AlertDialog.Builder(
+                                                    MainActivity.this);
+                                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    MainActivity.this.finish();
+                                                }
+                                            });
+
+                                            AlertDialog alertDialog = builder.create();
+                                            // Setting Dialog Title
+                                            alertDialog.setTitle("Congrats!");
+
+                                            // Setting Dialog Message
+                                            alertDialog.setMessage("Alex will pick you up in "+responseStatusOrder.getTime());
+
+
+                                            alertDialog.show();
+                                            //
+                                        }
+                                    }
+                                });
 
 
                         transferEleganceApplication.getHistories().add(new HistoryEntity(fromAutocomplete.getTextValue(), toAutocomplete.getTextValue(), date, currentPrice));
@@ -643,7 +726,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public boolean onMyLocationButtonClick() {
-       // stateFrom = false;
+        stateFrom = false;
         return false;
     }
 
