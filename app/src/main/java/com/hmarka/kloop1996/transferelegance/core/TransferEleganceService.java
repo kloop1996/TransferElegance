@@ -35,7 +35,7 @@ public interface TransferEleganceService {
             "Content-Type : application/json"
     })
     @GET("/api/nurse/get_driver_status/")
-    public Call<ResponseDriverStatus> getDriverStatus();
+    public rx.Observable<ResponseDriverStatus> getDriverStatus();
 
     @Headers({
             "Content-Type : application/json"
@@ -55,7 +55,7 @@ public interface TransferEleganceService {
         public static TransferEleganceService create() {
             Retrofit retrofit;
             retrofit = new Retrofit.Builder()
-                    .baseUrl("http://hmtest.pythonanywhere.com")
+                    .baseUrl("http://138.201.156.140")
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                     .build();

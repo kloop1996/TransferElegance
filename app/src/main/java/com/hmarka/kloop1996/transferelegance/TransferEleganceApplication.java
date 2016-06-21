@@ -46,6 +46,10 @@ public class TransferEleganceApplication extends Application {
     private String deviceToken;
     private String userToken;
 
+    private boolean driverStatus;
+
+
+
     public static TransferEleganceApplication get(Context context) {
         return (TransferEleganceApplication) context.getApplicationContext();
     }
@@ -98,6 +102,8 @@ public class TransferEleganceApplication extends Application {
     }
 
     private void initConfiguration(){
+        driverStatus = false;
+
         settings = getSharedPreferences(PREFS_NAME,MODE_PRIVATE);
 
         favouritePlacesSave = new SharedPreferenceFavourite();
@@ -160,5 +166,13 @@ public class TransferEleganceApplication extends Application {
 
     public void updateHistory(){
         historySave.saveFavorites(getApplicationContext(),histories);
+    }
+
+    public boolean isDriverStatus() {
+        return driverStatus;
+    }
+
+    public void setDriverStatus(boolean driverStatus) {
+        this.driverStatus = driverStatus;
     }
 }

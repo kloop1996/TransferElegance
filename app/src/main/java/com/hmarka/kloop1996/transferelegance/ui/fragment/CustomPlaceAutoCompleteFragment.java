@@ -91,6 +91,8 @@ public class CustomPlaceAutoCompleteFragment extends PlaceAutocompleteFragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 searchButton.setVisibility(s.length() > 0 ? View.VISIBLE : View.GONE);
+                MainActivity.getInstance().setStateFrom(true);
+
             }
 
             @Override

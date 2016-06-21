@@ -122,6 +122,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private boolean startMap = false;
     private GoogleApiClient mGoogleApiClient;
     private GoogleMap mGoogleMap;
+
+    public void setStateFrom(boolean stateFrom) {
+        this.stateFrom = stateFrom;
+    }
+
     private boolean stateFrom;
     private LatLng from;
     private LatLng to;
@@ -148,16 +153,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
 
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-
-        StrictMode.setThreadPolicy(policy);
 
         stateFrom =false;
         instance = this;
         activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         mainViewModel = new MainViewModel(this);
-
-       // String address = getAddress(this,53.552481, 28.079598);
 
         activityMainBinding.setViewModel(mainViewModel);
 
@@ -209,13 +209,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         TransferEleganceService transferEleganceService = transferEleganceApplication.getTransferEleganceService();
 
         ResponseDriverStatus responseDriverStatus = null;
-        try {
+        mainViewModel.stateDriver.set(TransferEleganceApplication.get(this).isDriverStatus());
 
-
-            mainViewModel.stateDriver.set(transferEleganceService.getDriverStatus().execute().body().getStatus());
-        } catch (IOException e) {
-            mainViewModel.stateDriver.set(false);
-        }
+        //mainViewModel.stateDriver.set(true);
 
 
         if (!mainViewModel.stateDriver.get()) {
@@ -663,6 +659,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 mainViewModel.autocopleteVisible.set(View.VISIBLE);
                                 mainViewModel.timerVisible.set(View.INVISIBLE);
                                 mainViewModel.stateOrder.set(true);
+
+
+
                                 if (statusSubsription!=null)
                                     statusSubsription.unsubscribe();
                             }
@@ -695,7 +694,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     @Override
                                     public void onNext(ResponseStatusOrder responseStatusOrder) {
                                         if (responseStatusOrder.getStatus()!=null){
-
+                                            countDownTimer.onFinish();
                                             countDownTimer.cancel();
 
                                             mainViewModel.autocopleteVisible.set(View.VISIBLE);

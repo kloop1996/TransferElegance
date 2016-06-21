@@ -157,6 +157,10 @@ public class MainViewModel implements ViewModel {
 
         setTextTimer(hour+":"+minute);
         countTime--;
+
+        if (countTime==0){
+            countTime = 180;
+        }
     }
 
     public void setTextTimer(String text){

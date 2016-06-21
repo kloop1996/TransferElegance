@@ -146,7 +146,6 @@
             android:id="@+id/loginButton"
             android:layout_width="200dp"
             android:layout_height="50dp"
-            android:background="@drawable/selector_shape_black"
             android:onClick="@{viewModel.onClickLogin}"
             android:text="@string/continue_label"
             android:textStyle="bold"

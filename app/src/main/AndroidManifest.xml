@@ -24,20 +24,27 @@
         <activity android:name=".ui.activtity.SettingsActivity"
             android:parentActivityName=".ui.activtity.MainActivity"
             android:theme="@style/Base.Theme.DesignDemo">
-
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.activtity.MainActivity"/>
         </activity>
 
         <activity android:name=".ui.activtity.HistoryActivity"
             android:parentActivityName=".ui.activtity.MainActivity"
             android:theme="@style/Base.Theme.DesignDemo"
             >
-
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.activtity.MainActivity"/>
         </activity>
 
         <activity android:name=".ui.activtity.MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize"
             >
+
+
+
         </activity>
 
         <activity android:name=".ui.activtity.SplashScreen"
