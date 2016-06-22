@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <item
+        android:id="@+id/menu_search_coordinates"
+        android:title=""
+        app:actionLayout="@layout/offline_action_layout"
+        app:showAsAction="always"
+
+
+    />
+
+
+</menu>

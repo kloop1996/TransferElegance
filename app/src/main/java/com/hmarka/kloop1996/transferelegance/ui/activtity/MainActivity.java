@@ -25,6 +25,8 @@ import android.support.v7.widget.Toolbar;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
@@ -162,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         activityMainBinding.setViewModel(mainViewModel);
 
         toolbar = activityMainBinding.toolbar;
+        toolbar.setLogo(R.drawable.places_ic_search);
         setSupportActionBar(toolbar);
 
         final ActionBar ab = getSupportActionBar();
@@ -216,12 +219,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (!mainViewModel.stateDriver.get()) {
             mainViewModel.stateOrder.set(true);
-            FragmentTransaction fragmentTransaction =
-                    getFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.map_container, new OfflineMessageFragment());
-            fragmentTransaction.commit();
 
-        } else {
+            //ставим в тулбар
+
+
+//            FragmentTransaction fragmentTransaction =
+//                    getFragmentManager().beginTransaction();
+//            fragmentTransaction.add(R.id.map_container, new OfflineMessageFragment());
+//            fragmentTransaction.commit();
+
+        }
 
             GoogleMapOptions options = new GoogleMapOptions();
             options.compassEnabled(true);
@@ -291,7 +298,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             });
 
 
-        }
+
 
 
         initAutocompleteView();
@@ -376,9 +383,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 getFragmentManager().findFragmentById(R.id.autocomplete_fragment_from);
         fromAutocomplete = (CustomPlaceAutoCompleteFragment) autocompleteFragment;
         fromAutocomplete.setTag("from");
-        if (!mainViewModel.stateDriver.get()) {
-            fromAutocomplete.setEnable(false);
-        }
+//        if (!mainViewModel.stateDriver.get()) {
+//            fromAutocomplete.setEnable(false);
+//        }
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
@@ -415,8 +422,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.autocomplete_fragment_to);
         toAutocomplete = (CustomPlaceAutoCompleteFragment) autocompleteFragment;
-        if (!mainViewModel.stateDriver.get())
-            toAutocomplete.setEnable(false);
+//        if (!mainViewModel.stateDriver.get())
+//            toAutocomplete.setEnable(false);
 
         toAutocomplete.setTag("to");
 
@@ -829,6 +836,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        if  (TransferEleganceApplication.get(this).isDriverStatus())
+            inflater.inflate(R.menu.menu_online, menu);
+        else{
+            inflater.inflate(R.menu.menu_offline, menu);
+        }
+        return true;
+    }
 
 
 }
