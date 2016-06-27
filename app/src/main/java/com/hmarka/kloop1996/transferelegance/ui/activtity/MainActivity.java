@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         activityMainBinding.setViewModel(mainViewModel);
 
         toolbar = activityMainBinding.toolbar;
-        toolbar.setLogo(R.drawable.places_ic_search);
+
         setSupportActionBar(toolbar);
 
         final ActionBar ab = getSupportActionBar();
@@ -214,19 +214,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         ResponseDriverStatus responseDriverStatus = null;
         mainViewModel.stateDriver.set(TransferEleganceApplication.get(this).isDriverStatus());
 
-        //mainViewModel.stateDriver.set(true);
 
 
         if (!mainViewModel.stateDriver.get()) {
             mainViewModel.stateOrder.set(true);
 
-            //ставим в тулбар
-
-
-//            FragmentTransaction fragmentTransaction =
-//                    getFragmentManager().beginTransaction();
-//            fragmentTransaction.add(R.id.map_container, new OfflineMessageFragment());
-//            fragmentTransaction.commit();
 
         }
 
@@ -288,8 +280,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             }
                             break;
                         case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                            // Location settings are not satisfied. However, we have no way
-                            // to fix the settings so we won't show the dialog.
+
 
                             break;
 
@@ -636,7 +627,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                        Snackbar snackbar = Snackbar
+                                .make(view, "Error", Snackbar.LENGTH_LONG);
 
                     }
 
@@ -650,8 +642,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
                         textView.setTextColor(Color.YELLOW);
                         snackbar.show();
-
-                        Toast.makeText(MainActivity.this, "Sucsess"+String.valueOf(responseCreateOrder.getOrderId()), Toast.LENGTH_SHORT).show();
 
                         mainViewModel.autocopleteVisible.set(View.INVISIBLE);
                         mainViewModel.timerVisible.set(View.VISIBLE);
@@ -723,7 +713,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             alertDialog.setTitle("Congrats!");
 
                                             // Setting Dialog Message
-                                            alertDialog.setMessage("Alex will pick you up in "+responseStatusOrder.getTime());
+                                            String time = responseStatusOrder.getTime();
+                                            time = time.substring(0,time.length()-3);
+                                            alertDialog.setMessage("Driver will pick you up in  "+time);
 
 
                                             alertDialog.show();
@@ -828,8 +820,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void moveMapCamera(LatLng latLng) {
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
     }
 
     private void calculateDistance() {
@@ -846,6 +837,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             inflater.inflate(R.menu.menu_offline, menu);
         }
         return true;
+    }
+
+    public void updateTitle(){
+        LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = vi.inflate(R.layout.drawer_header, null);
+
+
+        TextView textView = (TextView) v.findViewById(R.id.nurse_name);
+        textView.setText(TransferEleganceApplication.get(this).getUser().getName());
+
+        drawer.setHeader(textView);
+
     }
 
 

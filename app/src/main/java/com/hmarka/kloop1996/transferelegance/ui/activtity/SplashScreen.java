@@ -56,8 +56,7 @@ public class SplashScreen extends AppCompatActivity {
     }
 
     private void changeActivity(){
-         /* Create an Intent that will start the Menu-Activity. */
-//                Intent mainIntent = new Intent(SplashScreen.this, ActivityLauncher.class);
+
 
         Intent mainIntent;
         TransferEleganceApplication transferEleganceApplication = TransferEleganceApplication.get(SplashScreen.this);
@@ -68,8 +67,7 @@ public class SplashScreen extends AppCompatActivity {
             mainIntent = new Intent(SplashScreen.this, LoginActivity.class);
         }
 
-//                ActivityLauncher.this.startActivity(mainIntent);
-//                ActivityLauncher.this.finish();
+
         SplashScreen.this.startActivity(mainIntent);
         SplashScreen.this.finish();
     }

@@ -9,6 +9,7 @@ import android.view.View;
 
 import com.hmarka.kloop1996.transferelegance.TransferEleganceApplication;
 import com.hmarka.kloop1996.transferelegance.model.User;
+import com.hmarka.kloop1996.transferelegance.ui.activtity.MainActivity;
 import com.hmarka.kloop1996.transferelegance.ui.activtity.SettingsActivity;
 
 import rx.Subscription;
@@ -56,6 +57,8 @@ public class SettingsViewModel implements ViewModel {
         transferEleganceApplication.setUser(new User(name,telephone));
         transferEleganceApplication.updateSharedPreference();
 
+
+        MainActivity.getInstance().updateTitle();
         ((Activity)context).onBackPressed();
     }
 

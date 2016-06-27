@@ -34,7 +34,7 @@ public class CountTimePicker extends DialogFragment
             }
         });
         timePickerDialog.setCanceledOnTouchOutside(false);
-        timePickerDialog.setTitle("Count time");
+        timePickerDialog.setTitle("Duration of the RDV");
         return timePickerDialog;
     }
 

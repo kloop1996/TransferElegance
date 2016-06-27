@@ -16,7 +16,7 @@ public class DialogFactory {
     public static Dialog createCongratsDialog(Context context, String message) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(context)
                 .setTitle("Congrats!")
-                .setMessage("Alex will pick you up in "+message)
+                .setMessage("Driver will pick you up in "+message)
                 .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

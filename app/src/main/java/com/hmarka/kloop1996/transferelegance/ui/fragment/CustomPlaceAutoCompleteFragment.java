@@ -91,6 +91,9 @@ public class CustomPlaceAutoCompleteFragment extends PlaceAutocompleteFragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 searchButton.setVisibility(s.length() > 0 ? View.VISIBLE : View.GONE);
+                if (s.length()==1){
+                    zzzG();
+                }
                 MainActivity.getInstance().setStateFrom(true);
 
             }
@@ -195,7 +198,7 @@ public class CustomPlaceAutoCompleteFragment extends PlaceAutocompleteFragment {
 
     public void setText(CharSequence text) {
         this.editSearch.setText(text);
-        //this.zzzF();
+
     }
 
     public void setHint(CharSequence hint) {
